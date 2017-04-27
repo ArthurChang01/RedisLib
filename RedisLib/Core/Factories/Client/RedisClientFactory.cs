@@ -1,10 +1,10 @@
-﻿using RedisLib.Logger.Enums;
+﻿using RedisLib.Core.Enums;
 using StackExchange.Redis;
 using StackExchange.Redis.Extensions.Core;
 using StackExchange.Redis.Extensions.Jil;
 using StackExchange.Redis.Extensions.Protobuf;
 
-namespace RedisLib.Logger.Factories.Client
+namespace RedisLib.Core.Factories.Client
 {
     class RedisClientFactory
     {

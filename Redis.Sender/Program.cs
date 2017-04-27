@@ -1,4 +1,4 @@
-﻿using RedisLib.Logger;
+﻿using RedisLib.Core;
 using System;
 using System.Configuration;
 
@@ -10,13 +10,13 @@ namespace Redis.Sender
         {
             string conString = ConfigurationManager.ConnectionStrings["redis"].ConnectionString;
 
-            RedisLogger logger = new RedisLogger(conString);
+            Rediser logger = new Rediser(conString);
 
             while (true)
             {
                 Console.WriteLine("請輸入文字:");
                 var input = Console.ReadLine();
-                logger.SaveLog(string.Format(@"{0}{1}", "{apilog}", input), input);
+                logger.Save(string.Format(@"{0}{1}", "{apilog}", input), input);
             }
 
             Console.ReadKey();

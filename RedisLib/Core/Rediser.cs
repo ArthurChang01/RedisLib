@@ -1,16 +1,16 @@
-﻿using RedisLib.Logger.Enums;
-using RedisLib.Logger.Exceptions;
-using RedisLib.Logger.Factories.Client;
-using RedisLib.Logger.Factories.Connction;
+﻿using RedisLib.Core.Enums;
+using RedisLib.Core.Exceptions;
+using RedisLib.Core.Factories.Client;
+using RedisLib.Core.Factories.Connction;
 using StackExchange.Redis;
 using StackExchange.Redis.Extensions.Core;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace RedisLib.Logger
+namespace RedisLib.Core
 {
-    public class RedisLogger
+    public class Rediser
     {
         #region Members
         private static int counter = 0;
@@ -18,9 +18,9 @@ namespace RedisLib.Logger
         #endregion
 
         #region Constructor
-        public RedisLogger(string conString) : this(conString, SerializerType.Json) { }
+        public Rediser(string conString) : this(conString, SerializerType.Json) { }
 
-        public RedisLogger(string conString, SerializerType serializerType)
+        public Rediser(string conString, SerializerType serializerType)
         {
             IConnectionMultiplexer opt = ConnectionFactory.ConcretConnection(conString);
             this._client = RedisClientFactory.ConcretRedisClient(opt, serializerType);
@@ -96,7 +96,7 @@ namespace RedisLib.Logger
         {
             try
             {
-                await this._client.UnsubscribeAsync<T>(channelName, action);
+                await this._client.UnsubscribeAsync<T>(channelName, action, CommandFlags.FireAndForget);
             }
             catch (Exception ex)
             {
@@ -104,7 +104,7 @@ namespace RedisLib.Logger
             }
         }
 
-        public void SaveLog<T>(string key, T value, TimeSpan? expiredTime = null)
+        public void Save<T>(string key, T value, TimeSpan? expiredTime = null)
         {
             try
             {
@@ -115,11 +115,11 @@ namespace RedisLib.Logger
             }
             catch (Exception ex)
             {
-                throw new SaveLogException(ex);
+                throw new SaveException(ex);
             }
         }
 
-        public async Task SaveLogAsync<T>(string key, T value, TimeSpan? expiredTime = null)
+        public async Task SaveAsync<T>(string key, T value, TimeSpan? expiredTime = null)
         {
             try
             {
@@ -130,11 +130,11 @@ namespace RedisLib.Logger
             }
             catch (Exception ex)
             {
-                throw new SaveLogException(ex);
+                throw new SaveException(ex);
             }
         }
 
-        public IEnumerable<string> ReceiveLog(string keyPattern)
+        public IEnumerable<string> Receive(string keyPattern)
         {
             IEnumerable<string> result = null;
 
@@ -146,13 +146,13 @@ namespace RedisLib.Logger
             }
             catch (Exception ex)
             {
-                throw new ReceiveLogException(ex);
+                throw new ReceiveException(ex);
             }
 
             return result;
         }
 
-        public async Task<IEnumerable<T>> ReceiveLogAsync<T>(string keyPattern)
+        public async Task<IEnumerable<T>> ReceiveAsync<T>(string keyPattern)
         {
             IEnumerable<T> result = null;
 
@@ -163,7 +163,7 @@ namespace RedisLib.Logger
             }
             catch (Exception ex)
             {
-                throw new ReceiveLogException(ex);
+                throw new ReceiveException(ex);
             }
 
             return result;
@@ -205,7 +205,7 @@ namespace RedisLib.Logger
         {
             try
             {
-                this._client.HashIncerementBy(hashKey, key, value);
+                this._client.HashIncerementBy(hashKey, key, value, CommandFlags.FireAndForget);
             }
             catch (Exception ex)
             {
@@ -217,7 +217,7 @@ namespace RedisLib.Logger
         {
             try
             {
-                await this._client.HashIncerementByAsync(hashKey, key, value);
+                await this._client.HashIncerementByAsync(hashKey, key, value, CommandFlags.FireAndForget);
             }
             catch (Exception ex)
             {
@@ -229,7 +229,7 @@ namespace RedisLib.Logger
         {
             try
             {
-                _client.HashSet<T>(hashKey, key, value);
+                _client.HashSet<T>(hashKey, key, value, commandFlags: CommandFlags.FireAndForget);
             }
             catch (Exception ex)
             {
@@ -241,7 +241,7 @@ namespace RedisLib.Logger
         {
             try
             {
-                await _client.HashSetAsync<T>(hashKey, key, value);
+                await _client.HashSetAsync<T>(hashKey, key, value, commandFlags: CommandFlags.FireAndForget);
             }
             catch (Exception ex)
             {

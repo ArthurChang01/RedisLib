@@ -1,16 +1,16 @@
 ﻿using System;
 
-namespace RedisLib.Logger.Exceptions
+namespace RedisLib.Core.Exceptions
 {
-    public class SaveLogException : Exception
+    public class SaveException : Exception
     {
         private const string _msg = "Log saving encounter error";
 
-        public SaveLogException()
+        public SaveException()
             : base(_msg)
         { }
 
-        public SaveLogException(Exception inner)
+        public SaveException(Exception inner)
             : base(_msg, inner)
         { }
     }

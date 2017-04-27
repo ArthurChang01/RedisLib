@@ -1,7 +1,7 @@
 ﻿using StackExchange.Redis;
 using System;
 
-namespace RedisLib.Logger.Factories.Connction
+namespace RedisLib.Core.Factories.Connction
 {
     class ConnectionFactory
     {

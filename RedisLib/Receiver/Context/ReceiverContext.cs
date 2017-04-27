@@ -1,4 +1,4 @@
-﻿using RedisLib.Logger;
+﻿using RedisLib.Core;
 using RedisLib.Receiver.Models;
 using RedisLib.Receiver.ReceiverStates.Interfaces;
 using RedisLib.Receiver.ReceiverStates.States.Activity;
@@ -16,18 +16,18 @@ namespace RedisLib.Receiver.Context
         private string _Id = Guid.NewGuid().ToString();
         private CancellationTokenSource _cancelToken = new CancellationTokenSource();
         private List<string> _users = new List<string>();
-        private IReceiverState _currentState = null;
         private IDictionary<string, IReceiverState> _logState = new Dictionary<string, IReceiverState>();
         private ResourceTable _resourceTable = new ResourceTable();
 
-        private static RedisLogger _msgConnection = null;
-        private static RedisLogger _dataConnection = null;
+        private static Rediser _msgConnection = null;
+        private static Rediser _dataConnection = null;
         #endregion
 
         #region Constructor
         public ReceiverContext()
         {
             _logState.Add("InitialState", new InitialState(this));
+            _logState.Add("RegistryState", new RegistryState(this));
             _logState.Add("PrepareState", new PrepareState(this));
             _logState.Add("FetchDataState", new FetchDataState(this));
             _logState.Add("ProcessState", new ProcessState(this));
@@ -48,15 +48,16 @@ namespace RedisLib.Receiver.Context
 
         public List<string> Users => this._users;
 
-        public RedisLogger MsgConnection { get { return _msgConnection; } set { _msgConnection = value; } }
+        public Rediser MsgConnection { get { return _msgConnection; } set { _msgConnection = value; } }
 
-        public RedisLogger DataConnection { get { return _dataConnection; } set { _dataConnection = value; } }
+        public Rediser DataConnection { get { return _dataConnection; } set { _dataConnection = value; } }
         #endregion
 
         public void Run()
         {
-            this._currentState = LogStateTable["InitialState"];
-            this._currentState.Execute();
+            LogStateTable["InitialState"].Execute();
+
+            LogStateTable["RegistryState"].Execute();
 
             new Task(() =>
             {
@@ -64,16 +65,13 @@ namespace RedisLib.Receiver.Context
                 {
                     try
                     {
-                        this._currentState = LogStateTable["PrepareState"];
-                        this._currentState.Execute();
+                        LogStateTable["PrepareState"].Execute();
 
-                        this._currentState = LogStateTable["FetchDataState"];
-                        this._currentState.Execute();
+                        LogStateTable["FetchDataState"].Execute();
 
                         if (this.Users.Count > 0)
                         {
-                            this._currentState = LogStateTable["ProcessState"];
-                            this._currentState.Execute();
+                            LogStateTable["ProcessState"].Execute();
                         }
                     }
                     catch (Exception ex)
@@ -84,8 +82,7 @@ namespace RedisLib.Receiver.Context
                     System.Threading.Thread.Sleep(800);
                 }
 
-                this._currentState = LogStateTable["FinishState"];
-                this._currentState.Execute();
+                LogStateTable["FinishState"].Execute();
 
             }, _cancelToken.Token, TaskCreationOptions.LongRunning)
             .Start();

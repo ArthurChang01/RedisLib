@@ -1,6 +1,6 @@
 ﻿using Redis.Sender.Context;
 using Redis.Sender.SenderStates.Interfaces;
-using RedisLib.Logger;
+using RedisLib.Core;
 using System.Collections.Generic;
 
 namespace Redis.Sender.SenderStates.States.Base
@@ -19,9 +19,9 @@ namespace Redis.Sender.SenderStates.States.Base
 
         protected List<string> Users { get { return this._ctx.Users; } }
 
-        protected RedisLogger MsgConnection { get { return this._ctx.MsgConnection; } set { this._ctx.MsgConnection = value; } }
+        protected Rediser MsgConnection { get { return this._ctx.MsgConnection; } set { this._ctx.MsgConnection = value; } }
 
-        protected RedisLogger DataConnection { get { return this._ctx.DataConnection; } set { this._ctx.DataConnection = value; } }
+        protected Rediser DataConnection { get { return this._ctx.DataConnection; } set { this._ctx.DataConnection = value; } }
         #endregion
 
         #region Inerface(Abstract) Methods

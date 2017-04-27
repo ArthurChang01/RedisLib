@@ -1,4 +1,4 @@
-﻿namespace RedisLib.Logger.Enums
+﻿namespace RedisLib.Core.Enums
 {
     public enum SerializerType
     {

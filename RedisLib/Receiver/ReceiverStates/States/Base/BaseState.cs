@@ -1,4 +1,4 @@
-﻿using RedisLib.Logger;
+﻿using RedisLib.Core;
 using RedisLib.Receiver.Context;
 using RedisLib.Receiver.Models;
 using RedisLib.Receiver.ReceiverStates.Interfaces;
@@ -22,9 +22,9 @@ namespace RedisLib.Receiver.ReceiverStates.States.Base
 
         protected List<string> Users { get { return this._ctx.Users; } }
 
-        protected RedisLogger MsgConnection { get { return this._ctx.MsgConnection; } set { this._ctx.MsgConnection = value; } }
+        protected Rediser MsgConnection { get { return this._ctx.MsgConnection; } set { this._ctx.MsgConnection = value; } }
 
-        protected RedisLogger DataConnection { get { return this._ctx.DataConnection; } set { this._ctx.DataConnection = value; } }
+        protected Rediser DataConnection { get { return this._ctx.DataConnection; } set { this._ctx.DataConnection = value; } }
         #endregion
 
         #region Interface(Abstract) Methods

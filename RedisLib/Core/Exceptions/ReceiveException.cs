@@ -1,15 +1,15 @@
 ﻿using System;
 
-namespace RedisLib.Logger.Exceptions
+namespace RedisLib.Core.Exceptions
 {
-    public class ReceiveLogException : Exception
+    public class ReceiveException : Exception
     {
         private const string _msg = "Log receiving encounter error";
-        public ReceiveLogException()
+        public ReceiveException()
             : base(_msg)
         { }
 
-        public ReceiveLogException(Exception inner)
+        public ReceiveException(Exception inner)
             : base(_msg, inner)
         { }
     }

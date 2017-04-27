@@ -1,4 +1,4 @@
-﻿using RedisLib.Logger;
+﻿using RedisLib.Core;
 using RedisLib.Receiver.Context;
 using RedisLib.Receiver.Models;
 using RedisLib.Receiver.ReceiverStates.States.Base;
@@ -35,7 +35,7 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
             string conString = ConfigurationManager.ConnectionStrings["redis"].ConnectionString;
 
             //step1. Initial SyncUp message connection and channel
-            this.MsgConnection = new RedisLogger(conString);
+            this.MsgConnection = new Rediser(conString);
             this.MsgConnection.SubscribeMessage<ResourceRecord>(this._syncUpChannelName, rcd =>
             {
                 ResourceRecord rcdTarget = this.ResourceTable.Records.FirstOrDefault(o => o.Id.Equals(rcd.Id));
@@ -52,7 +52,7 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
             this.MsgConnection.PublishMessage<ResourceRecord>(this._syncUpChannelName, rcdSelf);
 
             //step3. Initial Data connection
-            this.DataConnection = new RedisLogger(conString);
+            this.DataConnection = new Rediser(conString);
         }
 
         protected override void Dispose(bool disposing)

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RedisLib.Logger.Exceptions
+namespace RedisLib.Core.Exceptions
 {
     public class SetHashTable : Exception
     {
