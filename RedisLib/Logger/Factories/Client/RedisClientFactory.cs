@@ -1,19 +1,15 @@
-﻿using RedisLoggerLib.Enums;
+﻿using RedisLib.Logger.Enums;
 using StackExchange.Redis;
 using StackExchange.Redis.Extensions.Core;
 using StackExchange.Redis.Extensions.Jil;
 using StackExchange.Redis.Extensions.Protobuf;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RedisLoggerLib.Factories.Client
+namespace RedisLib.Logger.Factories.Client
 {
     class RedisClientFactory
     {
-        public static ICacheClient ConcretRedisClient(IConnectionMultiplexer con, SerializerType serializerType= SerializerType.Json) {
+        public static ICacheClient ConcretRedisClient(IConnectionMultiplexer con, SerializerType serializerType = SerializerType.Json)
+        {
             ICacheClient client = null;
 
             if (serializerType == SerializerType.Json)

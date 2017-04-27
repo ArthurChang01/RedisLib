@@ -1,17 +1,12 @@
 ﻿using StackExchange.Redis;
-using StackExchange.Redis.Extensions.Core;
-using StackExchange.Redis.Extensions.Jil;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RedisLoggerLib.Factories.Connction
+namespace RedisLib.Logger.Factories.Connction
 {
     class ConnectionFactory
     {
-        public static IConnectionMultiplexer ConcretConnection(string conString="") {
+        public static IConnectionMultiplexer ConcretConnection(string conString = "")
+        {
             IConnectionMultiplexer con = null;
 
             ConfigurationOptions opt = null;
@@ -19,13 +14,13 @@ namespace RedisLoggerLib.Factories.Connction
                 opt = ConfigurationOptions.Parse(conString);
             else
                 opt = new ConfigurationOptions()
-            {
-                AllowAdmin = true,
-                KeepAlive = 180,
-                DefaultDatabase = 0,
-                ConnectRetry = 3,
-                ConnectTimeout = 3000,
-                EndPoints = {
+                {
+                    AllowAdmin = true,
+                    KeepAlive = 180,
+                    DefaultDatabase = 0,
+                    ConnectRetry = 3,
+                    ConnectTimeout = 3000,
+                    EndPoints = {
                     { "localhost",7000},
                     { "localhost",7001},
                     { "localhost",7002},
@@ -33,8 +28,8 @@ namespace RedisLoggerLib.Factories.Connction
                     { "localhost",7004},
                     { "localhost",7005},
                 },
-                DefaultVersion = new Version("3.2.0")
-            };
+                    DefaultVersion = new Version("3.2.0")
+                };
 
             con = ConnectionMultiplexer.Connect(opt);
 

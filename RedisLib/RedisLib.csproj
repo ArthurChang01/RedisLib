@@ -7,8 +7,8 @@
     <ProjectGuid>{1165D6CA-CEBD-437E-817F-6FF7F551C565}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RedisLoggerLib</RootNamespace>
-    <AssemblyName>RedisLoggerLib</AssemblyName>
+    <RootNamespace>RedisLib</RootNamespace>
+    <AssemblyName>RedisLib</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -33,8 +33,8 @@
     <Reference Include="Jil, Version=2.15.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Jil.2.15.0\lib\net45\Jil.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="protobuf-net, Version=2.1.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <HintPath>..\packages\protobuf-net.2.1.0\lib\net451\protobuf-net.dll</HintPath>
@@ -58,6 +58,7 @@
       <HintPath>..\packages\StackExchange.Redis.Extensions.Protobuf.2.1.0\lib\net45\StackExchange.Redis.Extensions.Protobuf.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
@@ -69,16 +70,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enums\SerializerType.cs" />
-    <Compile Include="Exceptions\ReceiveLogException.cs" />
-    <Compile Include="Exceptions\SaveLogException.cs" />
-    <Compile Include="Exceptions\SubscribeException.cs" />
-    <Compile Include="Factories\Client\RedisClientFactory.cs" />
-    <Compile Include="Factories\Connction\ConnectionFactory.cs" />
+    <Compile Include="Logger\Enums\SerializerType.cs" />
+    <Compile Include="Logger\Exceptions\GetHashTableException.cs" />
+    <Compile Include="Logger\Exceptions\ReceiveLogException.cs" />
+    <Compile Include="Logger\Exceptions\SaveLogException.cs" />
+    <Compile Include="Logger\Exceptions\PublishException.cs" />
+    <Compile Include="Logger\Exceptions\SetHashTable.cs" />
+    <Compile Include="Logger\Exceptions\SetHashTablePlusException.cs" />
+    <Compile Include="Logger\Exceptions\SubscribeException.cs" />
+    <Compile Include="Logger\Factories\Client\RedisClientFactory.cs" />
+    <Compile Include="Logger\Factories\Connction\ConnectionFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RedisLogger.cs" />
+    <Compile Include="Logger\RedisLogger.cs" />
+    <Compile Include="Receiver\Context\ReceiverContext.cs" />
+    <Compile Include="Receiver\ReceiverStates\Interfaces\IReceiverState.cs" />
+    <Compile Include="Receiver\Models\ResourceRecord.cs" />
+    <Compile Include="Receiver\Models\ResourceTable.cs" />
+    <Compile Include="Receiver\ReceiverStates\States\Activity\FetchDataState.cs" />
+    <Compile Include="Receiver\ReceiverStates\States\Activity\FinishState.cs" />
+    <Compile Include="Receiver\ReceiverStates\States\Activity\InitialState.cs" />
+    <Compile Include="Receiver\ReceiverStates\States\Activity\PrepareState.cs" />
+    <Compile Include="Receiver\ReceiverStates\States\Activity\ProcessState.cs" />
+    <Compile Include="Receiver\ReceiverStates\States\Base\BaseState.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

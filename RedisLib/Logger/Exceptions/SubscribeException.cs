@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RedisLoggerLib.Exceptions
+namespace RedisLib.Logger.Exceptions
 {
     public class SubscribeException : Exception
     {
-        private const string _msg = "Log saving encounter error";
+        private const string _msg = "Log subscribing encounter error";
 
         public SubscribeException()
             : base(_msg)

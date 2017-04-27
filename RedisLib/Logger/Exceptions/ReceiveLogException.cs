@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RedisLoggerLib.Exceptions
+namespace RedisLib.Logger.Exceptions
 {
-    public class ReceiveLogException:Exception
+    public class ReceiveLogException : Exception
     {
         private const string _msg = "Log receiving encounter error";
         public ReceiveLogException()

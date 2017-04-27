@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RedisLoggerLib.Enums
+namespace Redis.Models
 {
-    public enum SerializerType
+    public class User
     {
-        Json=0,
-        ProtoBuf
+        public string Name { get; set; }
+
+        public int Age { get; set; }
     }
 }
