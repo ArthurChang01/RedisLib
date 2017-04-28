@@ -13,10 +13,11 @@ namespace RedisLib.Receiver.Context
     {
         #region Member
         private bool disposedValue = false; // To detect redundant calls
+        private int _nodeId = 0;
         private string _Id = Guid.NewGuid().ToString();
         private CancellationTokenSource _cancelToken = new CancellationTokenSource();
         private List<string> _users = new List<string>();
-        private IDictionary<string, IReceiverState> _logState = new Dictionary<string, IReceiverState>();
+        private IDictionary<string, IReceiverState> _receiverState = new Dictionary<string, IReceiverState>();
         private ResourceTable _resourceTable = new ResourceTable();
 
         private static Rediser _msgConnection = null;
@@ -26,23 +27,25 @@ namespace RedisLib.Receiver.Context
         #region Constructor
         public ReceiverContext()
         {
-            _logState.Add("InitialState", new InitialState(this));
-            _logState.Add("RegistryState", new RegistryState(this));
-            _logState.Add("PrepareState", new PrepareState(this));
-            _logState.Add("FetchDataState", new FetchDataState(this));
-            _logState.Add("ProcessState", new ProcessState(this));
-            _logState.Add("FinishState", new FinishState(this));
+            _receiverState.Add("InitialState", new InitialState(this));
+            _receiverState.Add("RegistryState", new RegistryState(this));
+            _receiverState.Add("PrepareState", new PrepareState(this));
+            _receiverState.Add("FetchDataState", new FetchDataState(this));
+            _receiverState.Add("ProcessState", new ProcessState(this));
+            _receiverState.Add("FinishState", new FinishState(this));
         }
         #endregion
 
         #region Property
         public string ID => this._Id;
 
+        public int NodeId { get; set; }
+
         public CancellationTokenSource CancelToken => this._cancelToken;
 
         public IReceiverState LogState { get; set; }
 
-        public IDictionary<string, IReceiverState> LogStateTable => this._logState;
+        public IDictionary<string, IReceiverState> LogStateTable => this._receiverState;
 
         public ResourceTable ResourceTable => this._resourceTable;
 
@@ -101,10 +104,10 @@ namespace RedisLib.Receiver.Context
             _dataConnection.Client.Database.Multiplexer.Close();
             _dataConnection = null;
 
-            this._logState.Clear();
+            this._receiverState.Clear();
             this._users.Clear();
 
-            this._logState = null;
+            this._receiverState = null;
             this._users = null;
         }
 

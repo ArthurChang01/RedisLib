@@ -18,6 +18,8 @@ namespace RedisLib.Receiver.ReceiverStates.States.Base
 
         protected string ID => this._ctx.ID;
 
+        protected int NodeId { get { return this._ctx.NodeId; } set { this._ctx.NodeId = value; } }
+
         protected ResourceTable ResourceTable => this._ctx.ResourceTable;
 
         protected List<string> Users { get { return this._ctx.Users; } }

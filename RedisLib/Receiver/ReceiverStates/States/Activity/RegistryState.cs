@@ -23,15 +23,21 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
         public override void Execute()
         {
             //step1. pick up node id
-            IEnumerable<int> ieNodeIds = this.DataConnection.GetHashTable<string>("ReceiverRegistry").Keys.Select(o => int.Parse(o)).OrderBy(o => o);
-            IEnumerable<int> ieComparer = Enumerable.Range(0, ieNodeIds.Max() + 1); //0~(max+1)
-            int candidateId = ieComparer.Except<int>(ieNodeIds).First(); //pick up lake number
+            int candidateId = 0;
+            bool keyExist = this.DataConnection.KeyExist("ReceiverRegistry");
+            if (keyExist)
+            {
+                IEnumerable<int> ieNodeIds = this.DataConnection.GetHashTable<int>("ReceiverRegistry").Keys.Select(o => int.Parse(o)).OrderBy(o => o);
+                IEnumerable<int> ieComparer = Enumerable.Range(0, ieNodeIds.Max() + 1); //0~(max+1)
+                candidateId = ieComparer.Except<int>(ieNodeIds).First(); //pick up lake number
+            }
+            this.NodeId = candidateId;
 
             //step2. register node
-            this.DataConnection.SetHashTable<DateTimeOffset>("ReceiverRegistry", candidateId.ToString(), DateTimeOffset.UtcNow);
+            this.DataConnection.SetHashTable<DateTimeOffset>("ReceiverRegistry", this.NodeId.ToString(), DateTimeOffset.UtcNow);
 
             //step3. register reply infor
-            this.DataConnection.SetHashTable<int>("ReceiverReply", candidateId.ToString(), 0);
+            this.DataConnection.SetHashTable<int>("ReceiverReply", this.ID, 0);
         }
 
         protected override void Dispose(bool disposing)

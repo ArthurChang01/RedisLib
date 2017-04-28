@@ -31,7 +31,7 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
 
             //step1. Fetch Data
             this.Users.Clear();
-            this.Users.AddRange(DataConnection.Receive(string.Format(@"{{{0}}}*", rcd.Resource)));
+            this.Users.AddRange(DataConnection.Receive(string.Format(@"{{{0}}/{{1}}}*", rcd.Resource, this.NodeId)));
 
             //step2. Update information
             rcd.AmountOfLog = (this.Users == null) ? 0 : this.Users.LongCount();

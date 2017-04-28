@@ -60,6 +60,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SenderStates\Interfaces\ISenderState.cs" />
+    <Compile Include="SenderStates\Models\ReceiverRecord.cs" />
+    <Compile Include="SenderStates\Models\ReceiverTable.cs" />
     <Compile Include="SenderStates\States\Activity\InitialState.cs" />
     <Compile Include="SenderStates\States\Activity\PrepareState.cs" />
     <Compile Include="SenderStates\States\Activity\ProcessState.cs" />

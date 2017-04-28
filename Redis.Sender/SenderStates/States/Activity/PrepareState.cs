@@ -1,6 +1,7 @@
 ﻿using Redis.Sender.Context;
 using Redis.Sender.SenderStates.States.Base;
 using System;
+using System.Linq;
 
 namespace Redis.Sender.SenderStates.States.Activity
 {
@@ -20,7 +21,13 @@ namespace Redis.Sender.SenderStates.States.Activity
         #region Interface Methods
         public override void Execute()
         {
-            throw new NotImplementedException();
+            //step1. generate key
+            int mod = this.ReceiverTable.Receivers
+                                .Select(o => o.ReceiverNodeId)
+                                .OrderBy(o => o)
+                                .ToList<int>()
+                                .FindIndex(o => o == this.ReceiverTable.CandidateNodeId);
+            this.ReceiverTable.CandidateNodeId = (this.ReceiverTable.CandidateNodeId + 1) % mod;
         }
 
         protected override void Dispose(bool disposing)

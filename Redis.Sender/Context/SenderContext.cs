@@ -1,4 +1,5 @@
 ﻿using Redis.Sender.SenderStates.Interfaces;
+using Redis.Sender.SenderStates.Models;
 using Redis.Sender.SenderStates.States.Activity;
 using RedisLib.Core;
 using System;
@@ -14,6 +15,7 @@ namespace Redis.Sender.Context
         private List<string> _users = new List<string>();
         private IDictionary<string, ISenderState> _logState = new Dictionary<string, ISenderState>();
         private bool disposedValue;
+        private ReceiverTable _receiver = new ReceiverTable();
 
         private static Rediser _msgConnection = null;
         private static Rediser _dataConnection = null;
@@ -30,6 +32,7 @@ namespace Redis.Sender.Context
         public string ID => this._id;
         public List<string> Users => this._users;
         public IDictionary<string, ISenderState> LogState => this._logState;
+        public ReceiverTable ReceiverTable => this._receiver;
         public Rediser MsgConnection { get { return _msgConnection; } set { _msgConnection = value; } }
         public Rediser DataConnection { get { return _dataConnection; } set { _dataConnection = value; } }
         #endregion

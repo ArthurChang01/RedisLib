@@ -6,6 +6,7 @@ using StackExchange.Redis;
 using StackExchange.Redis.Extensions.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RedisLib.Core
@@ -167,6 +168,40 @@ namespace RedisLib.Core
             }
 
             return result;
+        }
+
+        public bool KeyExist(string key)
+        {
+            bool blExisit = false;
+
+            try
+            {
+                IEnumerable<string> ieKeys = this._client.SearchKeys(key);
+                blExisit = ieKeys != null && ieKeys.LongCount() > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new KeyExistException(ex);
+            }
+
+            return blExisit;
+        }
+
+        public async Task<bool> KeyExistAsync(string key)
+        {
+            bool blExist = false;
+
+            try
+            {
+                IEnumerable<string> ieKeys = await this._client.SearchKeysAsync(key);
+                blExist = ieKeys != null && ieKeys.LongCount() > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new KeyExistException(ex);
+            }
+
+            return blExist;
         }
 
         public IDictionary<string, T> GetHashTable<T>(string hashKey)
