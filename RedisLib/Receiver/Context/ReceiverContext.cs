@@ -4,6 +4,7 @@ using RedisLib.Receiver.ReceiverStates.Interfaces;
 using RedisLib.Receiver.ReceiverStates.States.Activity;
 using System;
 using System.Collections.Generic;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,6 +20,7 @@ namespace RedisLib.Receiver.Context
         private List<string> _users = new List<string>();
         private IDictionary<string, IReceiverState> _receiverState = new Dictionary<string, IReceiverState>();
         private ResourceTable _resourceTable = new ResourceTable();
+        private List<string> _dataKey = new List<string>();
 
         private static Rediser _msgConnection = null;
         private static Rediser _dataConnection = null;
@@ -43,13 +45,15 @@ namespace RedisLib.Receiver.Context
 
         public CancellationTokenSource CancelToken => this._cancelToken;
 
-        public IReceiverState LogState { get; set; }
+        public IReceiverState ReceiverState { get; set; }
 
         public IDictionary<string, IReceiverState> LogStateTable => this._receiverState;
 
         public ResourceTable ResourceTable => this._resourceTable;
 
         public List<string> Users => this._users;
+
+        public List<string> DataKey => this._dataKey;
 
         public Rediser MsgConnection { get { return _msgConnection; } set { _msgConnection = value; } }
 

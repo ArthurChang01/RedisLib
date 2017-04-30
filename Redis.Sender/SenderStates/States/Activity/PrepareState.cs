@@ -1,6 +1,7 @@
 ﻿using Redis.Sender.Context;
 using Redis.Sender.SenderStates.States.Base;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Redis.Sender.SenderStates.States.Activity
@@ -21,13 +22,25 @@ namespace Redis.Sender.SenderStates.States.Activity
         #region Interface Methods
         public override void Execute()
         {
-            //step1. generate key
-            int mod = this.ReceiverTable.Receivers
+            //step1. pick up next candidate node_Id
+            List<int> nodeIds = this.ReceiverTable.Receivers
                                 .Select(o => o.ReceiverNodeId)
-                                .OrderBy(o => o)
-                                .ToList<int>()
-                                .FindIndex(o => o == this.ReceiverTable.CandidateNodeId);
-            this.ReceiverTable.CandidateNodeId = (this.ReceiverTable.CandidateNodeId + 1) % mod;
+                                .Distinct()
+                                .OrderBy(o => o)           
+                                .ToList<int>();
+            int lastCandiateIndex = nodeIds.FindIndex(o => o == this.ReceiverTable.CandidateNodeId);
+            int candiateIndex = (lastCandiateIndex + 1) % nodeIds.Count();
+            this.ReceiverTable.CandidateNodeId = nodeIds[candiateIndex];
+
+            //step2. generate key
+            this.DataKey = 
+                string.Format(
+                    @"{{{0}/{1}}}:{2}", 
+                    this.LogType.ToString(), 
+                    this.ReceiverTable.CandidateNodeId, 
+                    Guid.NewGuid().ToString());
+
+
         }
 
         protected override void Dispose(bool disposing)

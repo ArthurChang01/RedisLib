@@ -45,6 +45,9 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
                 else
                     rcdTarget.Update(rcd); //update record
             });
+            this.MsgConnection.SubscribeMessage<string>(string.Format(@"ReceiveReply_{0}", this.ID), id => {
+
+            });
 
             //step2. publish self
             ResourceRecord rcdSelf = new ResourceRecord { Id = ID, UpdateTime = DateTime.Now };

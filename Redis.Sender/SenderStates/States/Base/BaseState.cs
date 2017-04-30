@@ -22,6 +22,12 @@ namespace Redis.Sender.SenderStates.States.Base
 
         protected ReceiverTable ReceiverTable => this._ctx.ReceiverTable;
 
+        protected string DataKey { get; set; }
+
+        protected object DataValue { get; set; }
+
+        protected enLogType LogType => this._ctx.LogType;
+
         protected Rediser MsgConnection { get { return this._ctx.MsgConnection; } set { this._ctx.MsgConnection = value; } }
 
         protected Rediser DataConnection { get { return this._ctx.DataConnection; } set { this._ctx.DataConnection = value; } }

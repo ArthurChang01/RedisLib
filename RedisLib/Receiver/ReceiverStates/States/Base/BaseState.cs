@@ -22,7 +22,9 @@ namespace RedisLib.Receiver.ReceiverStates.States.Base
 
         protected ResourceTable ResourceTable => this._ctx.ResourceTable;
 
-        protected List<string> Users { get { return this._ctx.Users; } }
+        protected List<string> Users => this._ctx.Users;
+
+        protected List<string> DataKey => this._ctx.DataKey;
 
         protected Rediser MsgConnection { get { return this._ctx.MsgConnection; } set { this._ctx.MsgConnection = value; } }
 

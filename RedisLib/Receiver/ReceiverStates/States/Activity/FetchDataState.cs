@@ -36,6 +36,7 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
             //step2. Update information
             rcd.AmountOfLog = (this.Users == null) ? 0 : this.Users.LongCount();
             this.MsgConnection.PublishMessage<ResourceRecord>("Sync_Message", rcd);
+            this.DataConnection.SetHashTable_Plus("ReceiverReply", this.ID, -1); //reduce reply debt
         }
 
         protected override void Dispose(bool disposing)

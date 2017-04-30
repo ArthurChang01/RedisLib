@@ -1,6 +1,8 @@
-﻿using Redis.Sender.Context;
+﻿using Redis.Sender.Constants;
+using Redis.Sender.Context;
 using Redis.Sender.SenderStates.States.Base;
 using System;
+using System.Linq;
 
 namespace Redis.Sender.SenderStates.States.Activity
 {
@@ -20,7 +22,19 @@ namespace Redis.Sender.SenderStates.States.Activity
         #region Interface Methods
         public override void Execute()
         {
-            throw new NotImplementedException();
+            string receiverId =
+                this.ReceiverTable.Receivers.FirstOrDefault(
+                    o => o.ReceiverNodeId.Equals(this.ReceiverTable.CandidateNodeId))
+                .ReceiverId;
+
+            //step1. Save data
+            this.DataConnection.Save(this.DataKey, this.DataValue);
+            if(!string.IsNullOrEmpty(receiverId))
+                this.DataConnection.SetHashTable_Plus(MsgConstant.ReceiverReply, receiverId, 1);
+
+            //step2. Publish receiver's reply
+            this.MsgConnection.PublishMessage<string>(
+                string.Format(@"ReceiveReply_{0}",receiverId), this.DataKey);
         }
 
         protected override void Dispose(bool disposing)
