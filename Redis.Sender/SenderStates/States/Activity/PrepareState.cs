@@ -26,21 +26,19 @@ namespace Redis.Sender.SenderStates.States.Activity
             List<int> nodeIds = this.ReceiverTable.Receivers
                                 .Select(o => o.ReceiverNodeId)
                                 .Distinct()
-                                .OrderBy(o => o)           
+                                .OrderBy(o => o)
                                 .ToList<int>();
             int lastCandiateIndex = nodeIds.FindIndex(o => o == this.ReceiverTable.CandidateNodeId);
             int candiateIndex = (lastCandiateIndex + 1) % nodeIds.Count();
             this.ReceiverTable.CandidateNodeId = nodeIds[candiateIndex];
 
             //step2. generate key
-            this.DataKey = 
+            this.DataKey =
                 string.Format(
-                    @"{{{0}/{1}}}:{2}", 
-                    this.LogType.ToString(), 
-                    this.ReceiverTable.CandidateNodeId, 
+                    @"{{{0}/{1}}}:{2}",
+                    this.LogType.ToString(),
+                    this.ReceiverTable.CandidateNodeId,
                     Guid.NewGuid().ToString());
-
-
         }
 
         protected override void Dispose(bool disposing)

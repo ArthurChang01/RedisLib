@@ -34,10 +34,9 @@ namespace Redis.Sender.Context
         #region Property
         public string ID => this._id;
         public string DataKey { get; set; }
-        public object DataValue { get; set; }
+        public object DataValue => this._dataValue;
         public List<string> Users => this._users;
         public enLogType LogType => this._logType;
-        public IDictionary<string, ISenderState> SenderState => this._senderState;
         public ReceiverTable ReceiverTable => this._receiver;
         public Rediser MsgConnection { get { return _msgConnection; } set { _msgConnection = value; } }
         public Rediser DataConnection { get { return _dataConnection; } set { _dataConnection = value; } }
@@ -48,8 +47,10 @@ namespace Redis.Sender.Context
             _senderState["InitialState"].Execute();
         }
 
-        public void Run(enLogType logType) {
+        public void Send(enLogType logType, object dataValue)
+        {
             this._logType = logType;
+            this._dataValue = dataValue;
 
             _senderState["PrepareState"].Execute();
 

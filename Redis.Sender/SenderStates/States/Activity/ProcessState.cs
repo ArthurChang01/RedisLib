@@ -29,12 +29,14 @@ namespace Redis.Sender.SenderStates.States.Activity
 
             //step1. Save data
             this.DataConnection.Save(this.DataKey, this.DataValue);
-            if(!string.IsNullOrEmpty(receiverId))
-                this.DataConnection.SetHashTable_Plus(MsgConstant.ReceiverReply, receiverId, 1);
+            this.DataConnection.SetHashTable_Plus(MsgConstant.ReceiverReply, receiverId, 1);
+            this.DataConnection.BufferingKey(MsgConstant.KeyBuffer, this.DataKey);
 
             //step2. Publish receiver's reply
-            this.MsgConnection.PublishMessage<string>(
-                string.Format(@"ReceiveReply_{0}",receiverId), this.DataKey);
+            if (!string.IsNullOrEmpty(receiverId))
+                this.MsgConnection.PublishMessage<string>(
+                    string.Format(@"ReceiveReply_{0}", receiverId), this.DataKey);
+
         }
 
         protected override void Dispose(bool disposing)

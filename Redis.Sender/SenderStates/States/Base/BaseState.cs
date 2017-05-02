@@ -22,9 +22,9 @@ namespace Redis.Sender.SenderStates.States.Base
 
         protected ReceiverTable ReceiverTable => this._ctx.ReceiverTable;
 
-        protected string DataKey { get; set; }
+        protected string DataKey { get { return this._ctx.DataKey; } set { this._ctx.DataKey = value; } }
 
-        protected object DataValue { get; set; }
+        protected object DataValue => this._ctx.DataValue;
 
         protected enLogType LogType => this._ctx.LogType;
 

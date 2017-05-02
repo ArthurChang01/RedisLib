@@ -37,15 +37,16 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
             //step1. Initial SyncUp message connection and channel
             this.MsgConnection = new Rediser(conString);
             this.MsgConnection.SubscribeMessage<ResourceRecord>(this._syncUpChannelName, rcd =>
-            {
-                ResourceRecord rcdTarget = this.ResourceTable.Records.FirstOrDefault(o => o.Id.Equals(rcd.Id));
+           {
+               ResourceRecord rcdTarget = this.ResourceTable.Records.FirstOrDefault(o => o.Id.Equals(rcd.Id));
 
-                if (rcdTarget == null)
-                    this.ResourceTable.Add(rcd);
-                else
-                    rcdTarget.Update(rcd); //update record
-            });
-            this.MsgConnection.SubscribeMessage<string>(string.Format(@"ReceiveReply_{0}", this.ID), id => {
+               if (rcdTarget == null)
+                   this.ResourceTable.Add(rcd);
+               else
+                   rcdTarget.Update(rcd); //update record
+           });
+            this.MsgConnection.SubscribeMessage<string>(string.Format(@"ReceiveReply_{0}", this.ID), id =>
+            {
 
             });
 

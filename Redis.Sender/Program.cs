@@ -1,6 +1,6 @@
-﻿using RedisLib.Core;
+﻿using Redis.Sender.Context;
+using Redis.Sender.SenderStates.Models;
 using System;
-using System.Configuration;
 
 namespace Redis.Sender
 {
@@ -8,15 +8,14 @@ namespace Redis.Sender
     {
         static void Main(string[] args)
         {
-            string conString = ConfigurationManager.ConnectionStrings["redis"].ConnectionString;
+            SenderContext ctx = new SenderContext();
+            ctx.Initial();
 
-            Rediser logger = new Rediser(conString);
+            while (true) {
+                Console.WriteLine("請輸入值:");
+                string value = Console.ReadLine();
 
-            while (true)
-            {
-                Console.WriteLine("請輸入文字:");
-                var input = Console.ReadLine();
-                logger.Save(string.Format(@"{0}{1}", "{apilog}", input), input);
+                ctx.Send(enLogType.API, value);
             }
 
             Console.ReadKey();

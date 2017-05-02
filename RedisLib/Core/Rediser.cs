@@ -1,4 +1,5 @@
-﻿using RedisLib.Core.Enums;
+﻿using Jil;
+using RedisLib.Core.Enums;
 using RedisLib.Core.Exceptions;
 using RedisLib.Core.Factories.Client;
 using RedisLib.Core.Factories.Connction;
@@ -16,6 +17,7 @@ namespace RedisLib.Core
         #region Members
         private static int counter = 0;
         ICacheClient _client = null;
+        private static readonly object _asyncObj = new object();
         #endregion
 
         #region Constructor
@@ -33,6 +35,17 @@ namespace RedisLib.Core
         #endregion
 
         #region Public Methods
+
+        public ITransaction CreateTransaction()
+        {
+            return this._client.Database.CreateTransaction(_asyncObj);
+        }
+
+        public async Task ExecuteTransaction(ITransaction tran)
+        {
+            await tran.ExecuteAsync(CommandFlags.FireAndForget);
+        }
+
         public void PublishMessage<T>(string channelName, T message)
         {
             try
@@ -135,6 +148,26 @@ namespace RedisLib.Core
             }
         }
 
+        public async Task SaveAsyncWithTran<T>(string key, T value, ITransaction tran, TimeSpan? expiredTime = null)
+        {
+            if (tran == null)
+                throw new ArgumentException("need ITransaction instance");
+
+            string strVal = Jil.JSON.Serialize<T>(value);
+
+            try
+            {
+                if (expiredTime.HasValue)
+                    await tran.StringSetAsync(key, strVal, expiredTime.Value);
+                else
+                    await tran.StringSetAsync(key, strVal);
+            }
+            catch (Exception ex)
+            {
+                throw new SaveException(ex);
+            }
+        }
+
         public IEnumerable<string> Receive(string keyPattern)
         {
             IEnumerable<string> result = null;
@@ -170,6 +203,26 @@ namespace RedisLib.Core
             return result;
         }
 
+        public async Task<IEnumerable<T>> ReceiveAsyncWithTran<T>(string keyPattern, ITransaction tran)
+        {
+            if (tran == null)
+                throw new ArgumentException("need ITransaction instance");
+
+            IEnumerable<T> result = null;
+
+            try
+            {
+                string strVal = await tran.StringGetAsync(keyPattern);
+                result = JSON.Deserialize<IEnumerable<T>>(strVal);
+            }
+            catch (Exception ex)
+            {
+                throw new ReceiveException(ex);
+            }
+
+            return result;
+        }
+
         public bool KeyExist(string key)
         {
             bool blExisit = false;
@@ -193,8 +246,26 @@ namespace RedisLib.Core
 
             try
             {
-                IEnumerable<string> ieKeys = await this._client.SearchKeysAsync(key);
-                blExist = ieKeys != null && ieKeys.LongCount() > 0;
+                blExist = await this._client.Database.KeyExistsAsync(key);
+            }
+            catch (Exception ex)
+            {
+                throw new KeyExistException(ex);
+            }
+
+            return blExist;
+        }
+
+        public async Task<bool> KeyExistAsyncWithTran(string key, ITransaction tran)
+        {
+            if (tran == null)
+                throw new ArgumentException("need ITransaction instance");
+
+            bool blExist = false;
+
+            try
+            {
+                blExist = await tran.KeyExistsAsync(key);
             }
             catch (Exception ex)
             {
@@ -236,6 +307,27 @@ namespace RedisLib.Core
             return result;
         }
 
+        public async Task<IDictionary<string, T>> GetHashTableAsyncWithTran<T>(string hashKey, ITransaction tran)
+        {
+            if (tran == null)
+                throw new ArgumentException("need ITransaction instance");
+
+            IDictionary<string, T> result = new Dictionary<string, T>();
+
+            try
+            {
+                (await tran.HashGetAllAsync(hashKey)).ToList().ForEach(o =>
+                    result.Add(o.Name, Jil.JSON.Deserialize<T>(o.Value))
+                );
+            }
+            catch (Exception ex)
+            {
+                throw new GetHashTableException(ex);
+            }
+
+            return result;
+        }
+
         public void SetHashTable_Plus(string hashKey, string key, int value = 1)
         {
             try
@@ -260,6 +352,21 @@ namespace RedisLib.Core
             }
         }
 
+        public async Task SetHashTable_PlusAsyncWithTran(string hashKey, string key, int value = 1, ITransaction tran = null)
+        {
+            if (tran == null)
+                throw new ArgumentException("need ITransaction instance");
+
+            try
+            {
+                await tran.HashIncrementAsync(hashKey, key, value, CommandFlags.FireAndForget);
+            }
+            catch (Exception ex)
+            {
+                throw new SetHashTablePlusException(ex);
+            }
+        }
+
         public void SetHashTable<T>(string hashKey, string key, T value)
         {
             try
@@ -268,7 +375,7 @@ namespace RedisLib.Core
             }
             catch (Exception ex)
             {
-                throw new SetHashTable(ex);
+                throw new SetHashTableException(ex);
             }
         }
 
@@ -280,8 +387,115 @@ namespace RedisLib.Core
             }
             catch (Exception ex)
             {
-                throw new SetHashTable(ex);
+                throw new SetHashTableException(ex);
             }
+        }
+
+        public async Task SetHashTableAsyncWithTran<T>(string hashKey, string key, T value, ITransaction tran)
+        {
+            if (tran == null)
+                throw new ArgumentException("need ITransaction instance");
+
+            string strVal = Jil.JSON.Serialize<T>(value);
+
+            try
+            {
+                await tran.HashSetAsync(hashKey, key, strVal, flags: CommandFlags.FireAndForget);
+            }
+            catch (Exception ex)
+            {
+                throw new SetHashTableException(ex);
+            }
+        }
+
+        public void BufferingKey(string bufferName, string key)
+        {
+            try
+            {
+                this._client.ListAddToLeft(bufferName, key);
+            }
+            catch (Exception ex)
+            {
+                throw new BufferingKeyException(ex);
+            }
+        }
+
+        public async Task BufferingKeyAsync(string bufferName, string key)
+        {
+            try
+            {
+                await this._client.ListAddToLeftAsync(bufferName, key);
+            }
+            catch (Exception ex)
+            {
+                throw new BufferingKeyException(ex);
+            }
+        }
+
+        public async Task BufferingKeyAsyncWithTran(string bufferName, string key, ITransaction tran)
+        {
+            if (tran == null)
+                throw new ArgumentException("need ITransaction instance");
+
+            try
+            {
+                await tran.ListLeftPushAsync(bufferName, key, flags: CommandFlags.FireAndForget);
+            }
+            catch (Exception ex)
+            {
+                throw new BufferingKeyException(ex);
+            }
+        }
+
+        public IEnumerable<string> GetBufferingKeyByRange(string bufferName, int start, int end)
+        {
+            IEnumerable<string> ieKeys = null;
+
+            try
+            {
+                ieKeys = this._client.Database.ListRange(bufferName, start, end, flags: CommandFlags.FireAndForget).OfType<string>();
+            }
+            catch (Exception ex)
+            {
+                throw new GetBufferingKeyByRangeException(ex);
+            }
+
+            return ieKeys;
+        }
+
+        public async Task<IEnumerable<string>> GetBufferingKeyByRangeAsync(string bufferName, int start, int end)
+        {
+            IEnumerable<string> ieKeys = null;
+
+            try
+            {
+                ieKeys = (await this._client.Database.ListRangeAsync(bufferName, start, end)).OfType<string>();
+            }
+            catch (Exception ex)
+            {
+                throw new GetBufferingKeyByRangeException(ex);
+            }
+
+            return ieKeys;
+        }
+
+        public async Task<IEnumerable<string>> GetBufferingKeyByRangeAsyncWithTran(string bufferName, int start, int end, ITransaction tran)
+        {
+            if (tran == null)
+                throw new ArgumentException("need ITransaction instance");
+
+            IEnumerable<string> ieKeys = null;
+
+            try
+            {
+                ieKeys = (await tran.ListRangeAsync(bufferName, start, end, flags: CommandFlags.FireAndForget)).OfType<string>();
+            }
+            catch (Exception ex)
+            {
+                throw new GetBufferingKeyByRangeException(ex);
+            }
+
+            return ieKeys;
         }
         #endregion
     }

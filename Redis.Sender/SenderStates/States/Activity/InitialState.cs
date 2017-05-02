@@ -39,9 +39,9 @@ namespace Redis.Sender.SenderStates.States.Activity
 
             if (keyExist)
                 this.ReceiverTable.Receivers =
-                    this.DataConnection.GetHashTable<string>(MsgConstant.ReceiverRegistry)
+                     this.DataConnection.GetHashTable<string>(MsgConstant.ReceiverRegistry)
                           .Select(o =>
-                            new ReceiverRecord { ReceiverNodeId = int.Parse(o.Key), UnReplyCounter=int.Parse(o.Value) });
+                            new ReceiverRecord { ReceiverNodeId = int.Parse(o.Key), UnReplyCounter = int.Parse(o.Value) });
             else //Default is 0
                 this.ReceiverTable.Receivers = new List<ReceiverRecord> {
                     new ReceiverRecord { ReceiverNodeId = 0, ReceiverId = string.Empty, UnReplyCounter = 0 } };
@@ -51,7 +51,7 @@ namespace Redis.Sender.SenderStates.States.Activity
 
             if (keyExist)
             {
-                IDictionary<string, int> replyTable = 
+                IDictionary<string, int> replyTable =
                     this.DataConnection.GetHashTable<int>(MsgConstant.ReceiverReply);
 
                 this.ReceiverTable.Receivers =

@@ -2,15 +2,15 @@
 
 namespace RedisLib.Core.Exceptions
 {
-    public class SetHashTable : Exception
+    public class SetHashTableException : Exception
     {
         private const string _msg = "SetHashTable";
 
-        public SetHashTable()
+        public SetHashTableException()
             : base(_msg)
         { }
 
-        public SetHashTable(Exception inner)
+        public SetHashTableException(Exception inner)
             : base(_msg, inner)
         { }
     }

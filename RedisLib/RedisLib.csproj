@@ -97,12 +97,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Enums\SerializerType.cs" />
+    <Compile Include="Core\Exceptions\BufferingKeyException.cs" />
+    <Compile Include="Core\Exceptions\GetBufferingKeyByRangeException.cs" />
     <Compile Include="Core\Exceptions\GetHashTableException.cs" />
     <Compile Include="Core\Exceptions\KeyExistException.cs" />
     <Compile Include="Core\Exceptions\ReceiveException.cs" />
     <Compile Include="Core\Exceptions\SaveException.cs" />
     <Compile Include="Core\Exceptions\PublishException.cs" />
-    <Compile Include="Core\Exceptions\SetHashTable.cs" />
+    <Compile Include="Core\Exceptions\SetHashTableException.cs" />
     <Compile Include="Core\Exceptions\SetHashTablePlusException.cs" />
     <Compile Include="Core\Exceptions\SubscribeException.cs" />
     <Compile Include="Core\Factories\Client\RedisClientFactory.cs" />
