@@ -1,10 +1,11 @@
-﻿using Redis.Sender.Constants;
-using Redis.Sender.Context;
-using Redis.Sender.SenderStates.States.Base;
+﻿using RedisLib.Sender.Constants;
+using RedisLib.Sender.Context;
+using RedisLib.Sender.Models;
+using RedisLib.Sender.SenderStates.States.Base;
 using System;
 using System.Linq;
 
-namespace Redis.Sender.SenderStates.States.Activity
+namespace RedisLib.Sender.SenderStates.States.Activity
 {
     class ProcessState : BaseState
     {
@@ -17,6 +18,8 @@ namespace Redis.Sender.SenderStates.States.Activity
 
         #region Property
         public override string StateName => "ProcessState";
+
+        public ReceiverTable ReceiverTable { get; private set; }
         #endregion
 
         #region Interface Methods
@@ -29,13 +32,12 @@ namespace Redis.Sender.SenderStates.States.Activity
 
             //step1. Save data
             this.DataConnection.Save(this.DataKey, this.DataValue);
-            this.DataConnection.SetHashTable_Plus(MsgConstant.ReceiverReply, receiverId, 1);
-            this.DataConnection.BufferingKey(MsgConstant.KeyBuffer, this.DataKey);
+            this.DataConnection.SetHashTable_Plus(KeyName.ReceiverReply, receiverId, 1);
 
             //step2. Publish receiver's reply
             if (!string.IsNullOrEmpty(receiverId))
                 this.MsgConnection.PublishMessage<string>(
-                    string.Format(@"ReceiveReply_{0}", receiverId), this.DataKey);
+                    string.Format(ChannelName.ReceiveReply, receiverId), this.DataKey);
 
         }
 

@@ -1,4 +1,5 @@
-﻿using RedisLib.Receiver.Context;
+﻿using RedisLib.Receiver.Constants;
+using RedisLib.Receiver.Context;
 using RedisLib.Receiver.Models;
 using RedisLib.Receiver.ReceiverStates.States.Base;
 using System;
@@ -59,7 +60,7 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
 #endif
 
             //step2. publish new inform to other nodes
-            MsgConnection.PublishMessage<ResourceRecord>("Sync_Message", rcd);
+            MsgConnection.PublishMessage<ResourceRecord>(ChannelName.Sync_Message, rcd);
         }
 
         protected override void Dispose(bool disposing)

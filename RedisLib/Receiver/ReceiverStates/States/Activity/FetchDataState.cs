@@ -2,6 +2,8 @@
 using RedisLib.Receiver.Models;
 using RedisLib.Receiver.ReceiverStates.States.Base;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RedisLib.Receiver.ReceiverStates.States.Activity
@@ -31,12 +33,14 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
 
             //step1. Fetch Data
             this.Users.Clear();
-            this.Users.AddRange(DataConnection.Receive(string.Format(@"{{{0}}/{{1}}}*", rcd.Resource, this.NodeId)));
+            IEnumerable<string> bufferedKeys = DataConnection.GetBufferingKeyByRange("KeyBuffer", 0, 100);
+            IEnumerable<string> existingKeys = DataConnection.Fetch(string.Format(@"{{{0}}/{{1}}}*", rcd.Resource, this.NodeId));
+            this.Users.AddRange(bufferedKeys.Union<string>(existingKeys));
 
             //step2. Update information
             rcd.AmountOfLog = (this.Users == null) ? 0 : this.Users.LongCount();
             this.MsgConnection.PublishMessage<ResourceRecord>("Sync_Message", rcd);
-            this.DataConnection.SetHashTable_Plus("ReceiverReply", this.ID, -1); //reduce reply debt
+            this.DataConnection.SetHashTable_Plus("ReceiverReply", this.ID, -1); //pay back replying debt
         }
 
         protected override void Dispose(bool disposing)

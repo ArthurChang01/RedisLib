@@ -1,14 +1,14 @@
-﻿using Redis.Sender.Constants;
-using Redis.Sender.Context;
-using Redis.Sender.SenderStates.Models;
-using Redis.Sender.SenderStates.States.Base;
-using RedisLib.Core;
+﻿using RedisLib.Core;
+using RedisLib.Sender.Constants;
+using RedisLib.Sender.Context;
+using RedisLib.Sender.Models;
+using RedisLib.Sender.SenderStates.States.Base;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 
-namespace Redis.Sender.SenderStates.States.Activity
+namespace RedisLib.Sender.SenderStates.States.Activity
 {
     class InitialState : BaseState
     {
@@ -35,11 +35,11 @@ namespace Redis.Sender.SenderStates.States.Activity
             this.DataConnection = new Rediser(conString);
 
             //step3. Concret receiver registry information
-            bool keyExist = this.DataConnection.KeyExist(MsgConstant.ReceiverRegistry);
+            bool keyExist = this.DataConnection.KeyExist(KeyName.ReceiverRegistry);
 
             if (keyExist)
                 this.ReceiverTable.Receivers =
-                     this.DataConnection.GetHashTable<string>(MsgConstant.ReceiverRegistry)
+                     this.DataConnection.GetHashTable<string>(KeyName.ReceiverRegistry)
                           .Select(o =>
                             new ReceiverRecord { ReceiverNodeId = int.Parse(o.Key), UnReplyCounter = int.Parse(o.Value) });
             else //Default is 0
@@ -47,12 +47,12 @@ namespace Redis.Sender.SenderStates.States.Activity
                     new ReceiverRecord { ReceiverNodeId = 0, ReceiverId = string.Empty, UnReplyCounter = 0 } };
 
             //step4. Concret receiver 
-            keyExist = this.DataConnection.KeyExist(MsgConstant.ReceiverReply);
+            keyExist = this.DataConnection.KeyExist(KeyName.ReceiverReply);
 
             if (keyExist)
             {
                 IDictionary<string, int> replyTable =
-                    this.DataConnection.GetHashTable<int>(MsgConstant.ReceiverReply);
+                    this.DataConnection.GetHashTable<int>(KeyName.ReceiverReply);
 
                 this.ReceiverTable.Receivers =
                     from registry in this.ReceiverTable.Receivers

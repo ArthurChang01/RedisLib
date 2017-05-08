@@ -1,11 +1,9 @@
-﻿namespace Redis.Sender.Constants
+﻿namespace RedisLib.Receiver.Constants
 {
-    class MsgConstant
+    static class KeyName
     {
-        public static string ReceiverRegistry = "ReceiverRegistry";
-
-        public static string ReceiverReply = "ReceiverReply";
-
         public static string KeyBuffer = "KeyBuffer";
+        public static string ReceiverRegistry = "ReceiverRegistry";
+        public static string ReceiverReply = "ReceiverReply";
     }
 }

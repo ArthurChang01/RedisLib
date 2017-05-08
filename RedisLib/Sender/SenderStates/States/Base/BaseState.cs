@@ -1,10 +1,10 @@
-﻿using Redis.Sender.Context;
-using Redis.Sender.SenderStates.Interfaces;
-using Redis.Sender.SenderStates.Models;
-using RedisLib.Core;
+﻿using RedisLib.Core;
+using RedisLib.Sender.Context;
+using RedisLib.Sender.Models;
+using RedisLib.Sender.SenderStates.Interfaces;
 using System.Collections.Generic;
 
-namespace Redis.Sender.SenderStates.States.Base
+namespace RedisLib.Sender.SenderStates.States.Base
 {
     abstract class BaseState : ISenderState
     {

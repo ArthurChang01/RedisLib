@@ -1,4 +1,4 @@
-﻿namespace Redis.Sender.SenderStates.Models
+﻿namespace RedisLib.Sender.Models
 {
     public class ReceiverRecord
     {

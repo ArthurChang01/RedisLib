@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Redis.Sender.SenderStates.Models
+namespace RedisLib.Sender.Models
 {
     public class ReceiverTable
     {

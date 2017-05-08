@@ -56,10 +56,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Redis.Models\Redis.Models.csproj">
-      <Project>{e7553e42-100d-4391-8eb0-6a414eb56a4f}</Project>
-      <Name>Redis.Models</Name>
-    </ProjectReference>
     <ProjectReference Include="..\RedisLib\RedisLib.csproj">
       <Project>{1165d6ca-cebd-437e-817f-6ff7f551c565}</Project>
       <Name>RedisLib</Name>

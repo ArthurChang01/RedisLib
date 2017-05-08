@@ -1,5 +1,6 @@
-﻿using Redis.Sender.Context;
-using Redis.Sender.SenderStates.Models;
+﻿
+using RedisLib.Sender.Context;
+using RedisLib.Sender.Models;
 using System;
 
 namespace Redis.Sender
@@ -11,7 +12,8 @@ namespace Redis.Sender
             SenderContext ctx = new SenderContext();
             ctx.Initial();
 
-            while (true) {
+            while (true)
+            {
                 Console.WriteLine("請輸入值:");
                 string value = Console.ReadLine();
 

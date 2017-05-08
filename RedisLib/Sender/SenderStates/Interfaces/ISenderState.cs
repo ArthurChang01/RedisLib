@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Redis.Sender.SenderStates.Interfaces
+namespace RedisLib.Sender.SenderStates.Interfaces
 {
     public interface ISenderState : IDisposable
     {

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace RedisLib.Core
 {
-    public class Rediser
+    public class Rediser : IRediser
     {
         #region Members
         private static int counter = 0;
@@ -36,6 +36,7 @@ namespace RedisLib.Core
 
         #region Public Methods
 
+        #region Transaction
         public ITransaction CreateTransaction()
         {
             return this._client.Database.CreateTransaction(_asyncObj);
@@ -45,7 +46,9 @@ namespace RedisLib.Core
         {
             await tran.ExecuteAsync(CommandFlags.FireAndForget);
         }
+        #endregion
 
+        #region Publish
         public void PublishMessage<T>(string channelName, T message)
         {
             try
@@ -69,7 +72,9 @@ namespace RedisLib.Core
                 throw new PublishException(ex);
             }
         }
+        #endregion
 
+        #region Subscribe
         public void SubscribeMessage<T>(string channelName, Action<T> action)
         {
             try
@@ -117,7 +122,9 @@ namespace RedisLib.Core
                 throw new SubscribeException(ex);
             }
         }
+        #endregion
 
+        #region Save data
         public void Save<T>(string key, T value, TimeSpan? expiredTime = null)
         {
             try
@@ -167,8 +174,10 @@ namespace RedisLib.Core
                 throw new SaveException(ex);
             }
         }
+        #endregion
 
-        public IEnumerable<string> Receive(string keyPattern)
+        #region Fetch data
+        public IEnumerable<string> Fetch(string keyPattern)
         {
             IEnumerable<string> result = null;
 
@@ -186,7 +195,7 @@ namespace RedisLib.Core
             return result;
         }
 
-        public async Task<IEnumerable<T>> ReceiveAsync<T>(string keyPattern)
+        public async Task<IEnumerable<T>> FetchAsync<T>(string keyPattern)
         {
             IEnumerable<T> result = null;
 
@@ -203,7 +212,7 @@ namespace RedisLib.Core
             return result;
         }
 
-        public async Task<IEnumerable<T>> ReceiveAsyncWithTran<T>(string keyPattern, ITransaction tran)
+        public async Task<IEnumerable<T>> FetchAsyncWithTran<T>(string keyPattern, ITransaction tran)
         {
             if (tran == null)
                 throw new ArgumentException("need ITransaction instance");
@@ -222,7 +231,9 @@ namespace RedisLib.Core
 
             return result;
         }
+        #endregion
 
+        #region Key exist operation
         public bool KeyExist(string key)
         {
             bool blExisit = false;
@@ -274,7 +285,9 @@ namespace RedisLib.Core
 
             return blExist;
         }
+        #endregion
 
+        #region Get hash table
         public IDictionary<string, T> GetHashTable<T>(string hashKey)
         {
             IDictionary<string, T> result = null;
@@ -327,7 +340,9 @@ namespace RedisLib.Core
 
             return result;
         }
+        #endregion
 
+        #region Increment hash table value
         public void SetHashTable_Plus(string hashKey, string key, int value = 1)
         {
             try
@@ -366,7 +381,9 @@ namespace RedisLib.Core
                 throw new SetHashTablePlusException(ex);
             }
         }
+        #endregion
 
+        #region Set hash table value
         public void SetHashTable<T>(string hashKey, string key, T value)
         {
             try
@@ -407,7 +424,9 @@ namespace RedisLib.Core
                 throw new SetHashTableException(ex);
             }
         }
+        #endregion
 
+        #region Push key data to buffer
         public void BufferingKey(string bufferName, string key)
         {
             try
@@ -446,7 +465,9 @@ namespace RedisLib.Core
                 throw new BufferingKeyException(ex);
             }
         }
+        #endregion
 
+        #region Get key data from buffer
         public IEnumerable<string> GetBufferingKeyByRange(string bufferName, int start, int end)
         {
             IEnumerable<string> ieKeys = null;
@@ -497,6 +518,8 @@ namespace RedisLib.Core
 
             return ieKeys;
         }
+        #endregion
+
         #endregion
     }
 }

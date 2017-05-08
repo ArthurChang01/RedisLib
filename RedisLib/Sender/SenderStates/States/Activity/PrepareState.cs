@@ -1,10 +1,10 @@
-﻿using Redis.Sender.Context;
-using Redis.Sender.SenderStates.States.Base;
+﻿using RedisLib.Sender.Context;
+using RedisLib.Sender.SenderStates.States.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Redis.Sender.SenderStates.States.Activity
+namespace RedisLib.Sender.SenderStates.States.Activity
 {
     class PrepareState : BaseState
     {

@@ -1,13 +1,13 @@
-﻿using Redis.Sender.SenderStates.Interfaces;
-using Redis.Sender.SenderStates.Models;
-using Redis.Sender.SenderStates.States.Activity;
-using RedisLib.Core;
+﻿using RedisLib.Core;
+using RedisLib.Sender.Models;
+using RedisLib.Sender.SenderStates.Interfaces;
+using RedisLib.Sender.SenderStates.States.Activity;
 using System;
 using System.Collections.Generic;
 
-namespace Redis.Sender.Context
+namespace RedisLib.Sender.Context
 {
-    class SenderContext
+    public class SenderContext
     {
         #region Members
         private string _id = Guid.NewGuid().ToString();
