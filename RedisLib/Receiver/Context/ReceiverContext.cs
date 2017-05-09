@@ -4,7 +4,6 @@ using RedisLib.Receiver.ReceiverStates.Interfaces;
 using RedisLib.Receiver.ReceiverStates.States.Activity;
 using System;
 using System.Collections.Generic;
-using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 

@@ -28,9 +28,9 @@ namespace RedisLib.Sender.SenderStates.States.Base
 
         protected enLogType LogType => this._ctx.LogType;
 
-        protected Rediser MsgConnection { get { return this._ctx.MsgConnection; } set { this._ctx.MsgConnection = value; } }
+        protected IRediser MsgConnection { get { return this._ctx.MsgConnection; } set { this._ctx.MsgConnection = value; } }
 
-        protected Rediser DataConnection { get { return this._ctx.DataConnection; } set { this._ctx.DataConnection = value; } }
+        protected IRediser DataConnection { get { return this._ctx.DataConnection; } set { this._ctx.DataConnection = value; } }
         #endregion
 
         #region Inerface(Abstract) Methods

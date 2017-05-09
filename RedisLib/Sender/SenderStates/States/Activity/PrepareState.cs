@@ -29,8 +29,12 @@ namespace RedisLib.Sender.SenderStates.States.Activity
                                 .OrderBy(o => o)
                                 .ToList<int>();
             int lastCandiateIndex = nodeIds.FindIndex(o => o == this.ReceiverTable.CandidateNodeId);
-            int candiateIndex = (lastCandiateIndex + 1) % nodeIds.Count();
-            this.ReceiverTable.CandidateNodeId = nodeIds[candiateIndex];
+            int candiateIndex = (nodeIds.Count() == 0) ?
+                                            0 :
+                                            (lastCandiateIndex + 1) % nodeIds.Count();
+            this.ReceiverTable.CandidateNodeId = candiateIndex == 0 ?
+                                                                             0 :
+                                                                             nodeIds[candiateIndex];
 
             //step2. generate key
             this.DataKey =

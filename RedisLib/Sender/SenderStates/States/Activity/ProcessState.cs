@@ -18,17 +18,14 @@ namespace RedisLib.Sender.SenderStates.States.Activity
 
         #region Property
         public override string StateName => "ProcessState";
-
-        public ReceiverTable ReceiverTable { get; private set; }
         #endregion
 
         #region Interface Methods
         public override void Execute()
         {
-            string receiverId =
-                this.ReceiverTable.Receivers.FirstOrDefault(
-                    o => o.ReceiverNodeId.Equals(this.ReceiverTable.CandidateNodeId))
-                .ReceiverId;
+            ReceiverRecord target = this.ReceiverTable.Receivers.FirstOrDefault(
+                    o => o.ReceiverNodeId.Equals(this.ReceiverTable.CandidateNodeId));
+            string receiverId = target == null ? string.Empty : target.ReceiverId;
 
             //step1. Save data
             this.DataConnection.Save(this.DataKey, this.DataValue);

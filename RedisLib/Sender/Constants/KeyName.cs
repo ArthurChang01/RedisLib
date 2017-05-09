@@ -1,6 +1,6 @@
 ﻿namespace RedisLib.Sender.Constants
 {
-    static class KeyName
+    public static class KeyName
     {
         public static string ReceiverRegistry = "ReceiverRegistry";
 

@@ -35,10 +35,10 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
             this.NodeId = candidateId;
 
             //step2. register node
-            this.DataConnection.SetHashTable<DateTimeOffset>(KeyName.ReceiverRegistry, this.NodeId.ToString(), DateTimeOffset.UtcNow);
+            this.DataConnection.SetHashTable<int>(KeyName.ReceiverRegistry, this.ID, this.NodeId);
 
             //step3. register reply infor
-            this.DataConnection.SetHashTable<int>(KeyName.ReceiverReply, this.ID, 0);
+            this.DataConnection.SetHashTable<int>(KeyName.ReceiverReply, this.NodeId.ToString(), 0);
         }
 
         protected override void Dispose(bool disposing)

@@ -20,8 +20,8 @@ namespace RedisLib.Sender.Context
         private object _dataValue = null;
         private enLogType _logType;
 
-        private static Rediser _msgConnection = null;
-        private static Rediser _dataConnection = null;
+        private static IRediser _msgConnection = null;
+        private static IRediser _dataConnection = null;
         #endregion
 
         public SenderContext()
@@ -35,16 +35,18 @@ namespace RedisLib.Sender.Context
         public string ID => this._id;
         public string DataKey { get; set; }
         public object DataValue => this._dataValue;
+        public ISenderState CurrentState => this._currentState;
         public List<string> Users => this._users;
         public enLogType LogType => this._logType;
         public ReceiverTable ReceiverTable => this._receiver;
-        public Rediser MsgConnection { get { return _msgConnection; } set { _msgConnection = value; } }
-        public Rediser DataConnection { get { return _dataConnection; } set { _dataConnection = value; } }
+        public IRediser MsgConnection { get { return _msgConnection; } set { _msgConnection = value; } }
+        public IRediser DataConnection { get { return _dataConnection; } set { _dataConnection = value; } }
         #endregion
 
         public void Initial()
         {
-            _senderState["InitialState"].Execute();
+            this._currentState = _senderState["InitialState"];
+            this._currentState.Execute();
         }
 
         public void Send(enLogType logType, object dataValue)
@@ -52,9 +54,11 @@ namespace RedisLib.Sender.Context
             this._logType = logType;
             this._dataValue = dataValue;
 
-            _senderState["PrepareState"].Execute();
+            this._currentState = _senderState["PrepareState"];
+            this._currentState.Execute();
 
-            _senderState["ProcessState"].Execute();
+            this._currentState = _senderState["ProcessState"];
+            this._currentState.Execute();
         }
 
         #region IDisposable Support
