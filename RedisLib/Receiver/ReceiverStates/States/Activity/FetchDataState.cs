@@ -2,16 +2,14 @@
 using RedisLib.Receiver.Models;
 using RedisLib.Receiver.ReceiverStates.States.Base;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace RedisLib.Receiver.ReceiverStates.States.Activity
 {
-    class FetchDataState : BaseState
+    class FetchDataState<T> : BaseState<T>
     {
         #region Constructor
-        public FetchDataState(ReceiverContext logContext)
+        public FetchDataState(ReceiverContext<T> logContext)
         {
             this._ctx = logContext;
         }
@@ -25,29 +23,22 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
         #region Interface Methods
         public override void Execute()
         {
-#if DEBUG
-            Console.WriteLine("FetchDataState");
-#endif
 
-            ResourceRecord rcd = this.ResourceTable.Records.First(o => o.Id.Equals(this.ID));
+            //step1. prepare keys
+            enLogType candidate = this.ExecutedRecords.Last();
+            string keyPattern = string.Format(@"{{{0}/{1}}}", candidate.ToString(), this.NodeId);
+            //TODO: received key
 
-            //step1. Fetch Data
-            this.Users.Clear();
-            IEnumerable<string> bufferedKeys = DataConnection.GetBufferingKeyByRange("KeyBuffer", 0, 100);
-            IEnumerable<string> existingKeys = DataConnection.Fetch(string.Format(@"{{{0}}/{{1}}}*", rcd.Resource, this.NodeId));
-            this.Users.AddRange(bufferedKeys.Union<string>(existingKeys));
-
-            //step2. Update information
-            rcd.AmountOfLog = (this.Users == null) ? 0 : this.Users.LongCount();
-            this.MsgConnection.PublishMessage<ResourceRecord>("Sync_Message", rcd);
-            this.DataConnection.SetHashTable_Plus("ReceiverReply", this.ID, -1); //pay back replying debt
+            //step2. fetch data
+            //TODO: fetch data
         }
 
         protected override void Dispose(bool disposing)
         {
             if (!this.disposedValue) return;
 
-            if (this.Users != null) this.Users.Clear();
+            if (this.DataKey != null) this.DataKey.Clear();
+            if (this.DataObjs != null) this.DataObjs.Clear();
             if (this._ctx != null) this._ctx = null;
         }
 

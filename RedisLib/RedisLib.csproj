@@ -91,15 +91,12 @@
     <Compile Include="Receiver\Constants\ChannelName.cs" />
     <Compile Include="Receiver\Constants\KeyName.cs" />
     <Compile Include="Receiver\Context\ReceiverContext.cs" />
+    <Compile Include="Receiver\Models\enLogType.cs" />
     <Compile Include="Receiver\ReceiverStates\Interfaces\IReceiverState.cs" />
-    <Compile Include="Receiver\Models\ResourceRecord.cs" />
-    <Compile Include="Receiver\Models\ResourceTable.cs" />
     <Compile Include="Receiver\ReceiverStates\States\Activity\FetchDataState.cs" />
-    <Compile Include="Receiver\ReceiverStates\States\Activity\FinishState.cs" />
     <Compile Include="Receiver\ReceiverStates\States\Activity\InitialState.cs" />
     <Compile Include="Receiver\ReceiverStates\States\Activity\PrepareState.cs" />
     <Compile Include="Receiver\ReceiverStates\States\Activity\ProcessState.cs" />
-    <Compile Include="Receiver\ReceiverStates\States\Activity\RegistryState.cs" />
     <Compile Include="Receiver\ReceiverStates\States\Base\BaseState.cs" />
     <Compile Include="Sender\Constants\ChannelName.cs" />
     <Compile Include="Sender\Constants\KeyName.cs" />

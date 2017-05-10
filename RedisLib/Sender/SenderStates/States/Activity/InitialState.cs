@@ -32,7 +32,7 @@ namespace RedisLib.Sender.SenderStates.States.Activity
                      this.DataConnection.GetHashTable<IDictionary<string, int>>(KeyName.ReceiverRegistry)
                           .SelectMany(o => o.Value)
                           .Select(o =>
-                            new ReceiverRecord { ReceiverId = o.Key, ReceiverNodeId = o.Value });
+                            new ReceiverRecord { ReceiverId = o.Key, ReceiverNodeId = o.Value }).ToList();
             else //Default is 0
                 this.ReceiverTable.Receivers = new List<ReceiverRecord> {
                     new ReceiverRecord { ReceiverNodeId = 0, ReceiverId = string.Empty, UnReplyCounter = 0 } };
@@ -47,17 +47,22 @@ namespace RedisLib.Sender.SenderStates.States.Activity
                           .SelectMany(o => o.Value);
 
                 this.ReceiverTable.Receivers =
-                    from registry in this.ReceiverTable.Receivers
-                    join reply in replyTable
-                    on registry.ReceiverNodeId.ToString() equals reply.Key
-                    select new ReceiverRecord
-                    {
-                        ReceiverId = registry.ReceiverId,
-                        ReceiverNodeId = registry.ReceiverNodeId,
-                        UnReplyCounter = reply.Value
-                    };
+                    (from registry in this.ReceiverTable.Receivers
+                     join reply in replyTable
+                     on registry.ReceiverNodeId.ToString() equals reply.Key
+                     select new ReceiverRecord
+                     {
+                         ReceiverId = registry.ReceiverId,
+                         ReceiverNodeId = registry.ReceiverNodeId,
+                         UnReplyCounter = reply.Value
+                     }).ToList();
             }
 
+            //step3. Subscribe Channel
+            this._ctx.MsgConnection.SubscribeMessage<string>("ReceiverRegistry", msg =>
+            {
+                //TODO: Upsert node information
+            });
         }
 
         protected override void Dispose(bool disposing)

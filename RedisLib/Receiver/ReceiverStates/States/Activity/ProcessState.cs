@@ -4,10 +4,10 @@ using System;
 
 namespace RedisLib.Receiver.ReceiverStates.States.Activity
 {
-    class ProcessState : BaseState
+    class ProcessState<T> : BaseState<T>
     {
         #region Constructor
-        public ProcessState(ReceiverContext logContext)
+        public ProcessState(ReceiverContext<T> logContext)
         {
             this._ctx = logContext;
         }
@@ -20,21 +20,19 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
         #region Interface Methods
         public override void Execute()
         {
-#if DEBUG
-            Console.WriteLine("ProcessState");
-#endif
-
             //do something
 
-            this.Users.Clear();
+            this.DataKey.Clear();
+            this.DataObjs.Clear();
         }
 
         protected override void Dispose(bool disposing)
         {
             if (!this.disposedValue) return;
 
+            if (this.DataKey != null) this.DataKey.Clear();
+            if (this.DataObjs != null) this.DataObjs.Clear();
             if (this._ctx != null) this._ctx = null;
-            if (this.Users != null) this.Users.Clear();
         }
 
         public override void Dispose()

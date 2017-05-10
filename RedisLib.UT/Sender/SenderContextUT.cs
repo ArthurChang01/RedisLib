@@ -39,7 +39,7 @@ namespace RedisLib.UT.Sender
         public void Finished()
         {
             if (this._ctx.ReceiverTable.Amount > 0)
-                this._ctx.ReceiverTable.Receivers.ToList().Clear();
+                this._ctx.ReceiverTable.Receivers.Clear();
 
             this._ctx.ReceiverTable.Receivers = null;
             this._ctx.MsgConnection = null;

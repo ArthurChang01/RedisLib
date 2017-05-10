@@ -79,7 +79,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <Compile Include="Receiver\ReceiverContext.UT.cs" />
+    <Compile Include="Receiver\ReceiverContextUT.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RedisLib\RedisLib.csproj">

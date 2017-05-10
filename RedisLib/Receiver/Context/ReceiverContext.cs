@@ -4,36 +4,30 @@ using RedisLib.Receiver.ReceiverStates.Interfaces;
 using RedisLib.Receiver.ReceiverStates.States.Activity;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace RedisLib.Receiver.Context
 {
-    public class ReceiverContext : IDisposable
+    public class ReceiverContext<T> : IDisposable
     {
         #region Member
         private bool disposedValue = false; // To detect redundant calls
-        private int _nodeId = 0;
         private string _Id = Guid.NewGuid().ToString();
-        private CancellationTokenSource _cancelToken = new CancellationTokenSource();
-        private List<string> _users = new List<string>();
-        private IDictionary<string, IReceiverState> _receiverState = new Dictionary<string, IReceiverState>();
-        private ResourceTable _resourceTable = new ResourceTable();
+        private List<T> _dataObjs = new List<T>();
         private List<string> _dataKey = new List<string>();
+        private Queue<enLogType> _execRecords = new Queue<enLogType>(2);
+        private IDictionary<string, IReceiverState> _receiverState = new Dictionary<string, IReceiverState>();
 
-        private static Rediser _msgConnection = null;
-        private static Rediser _dataConnection = null;
+        private static IRediser _msgConnection = null;
+        private static IRediser _dataConnection = null;
         #endregion
 
         #region Constructor
         public ReceiverContext()
         {
-            _receiverState.Add("InitialState", new InitialState(this));
-            _receiverState.Add("RegistryState", new RegistryState(this));
-            _receiverState.Add("PrepareState", new PrepareState(this));
-            _receiverState.Add("FetchDataState", new FetchDataState(this));
-            _receiverState.Add("ProcessState", new ProcessState(this));
-            _receiverState.Add("FinishState", new FinishState(this));
+            _receiverState.Add("InitialState", new InitialState<T>(this));
+            _receiverState.Add("PrepareState", new PrepareState<T>(this));
+            _receiverState.Add("FetchDataState", new FetchDataState<T>(this));
+            _receiverState.Add("ProcessState", new ProcessState<T>(this));
         }
         #endregion
 
@@ -42,64 +36,40 @@ namespace RedisLib.Receiver.Context
 
         public int NodeId { get; set; }
 
-        public CancellationTokenSource CancelToken => this._cancelToken;
-
         public IReceiverState ReceiverState { get; set; }
 
         public IDictionary<string, IReceiverState> LogStateTable => this._receiverState;
 
-        public ResourceTable ResourceTable => this._resourceTable;
+        public Queue<enLogType> ExecutedRecords => this._execRecords;
 
-        public List<string> Users => this._users;
+        public List<T> DataObjs => this._dataObjs;
 
         public List<string> DataKey => this._dataKey;
 
-        public Rediser MsgConnection { get { return _msgConnection; } set { _msgConnection = value; } }
+        public IRediser MsgConnection { get { return _msgConnection; } set { _msgConnection = value; } }
 
-        public Rediser DataConnection { get { return _dataConnection; } set { _dataConnection = value; } }
+        public IRediser DataConnection { get { return _dataConnection; } set { _dataConnection = value; } }
         #endregion
 
         public void Run()
         {
             LogStateTable["InitialState"].Execute();
 
-            LogStateTable["RegistryState"].Execute();
+            LogStateTable["PrepareState"].Execute();
 
-            new Task(() =>
+            LogStateTable["FetchDataState"].Execute();
+
+            if (this.DataObjs.Count > 0)
             {
-                while (!_cancelToken.Token.IsCancellationRequested)
-                {
-                    try
-                    {
-                        LogStateTable["PrepareState"].Execute();
+                LogStateTable["ProcessState"].Execute();
+            }
 
-                        LogStateTable["FetchDataState"].Execute();
-
-                        if (this.Users.Count > 0)
-                        {
-                            LogStateTable["ProcessState"].Execute();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-
-                    System.Threading.Thread.Sleep(800);
-                }
-
-                LogStateTable["FinishState"].Execute();
-
-            }, _cancelToken.Token, TaskCreationOptions.LongRunning)
-            .Start();
         }
 
         #region IDisposable Support
         protected void Dispose(bool disposing)
         {
             if (!this.disposedValue) return;
-
-            this._resourceTable.Records = null;
 
             _msgConnection.Client.Database.Multiplexer.Close();
             _msgConnection = null;
@@ -108,10 +78,10 @@ namespace RedisLib.Receiver.Context
             _dataConnection = null;
 
             this._receiverState.Clear();
-            this._users.Clear();
+            this._dataObjs.Clear();
 
             this._receiverState = null;
-            this._users = null;
+            this._dataObjs = null;
         }
 
         public void Dispose()

@@ -1,30 +1,18 @@
-﻿using RedisLib.Core;
-using RedisLib.Receiver.Constants;
+﻿using RedisLib.Receiver.Constants;
 using RedisLib.Receiver.Context;
-using RedisLib.Receiver.Models;
 using RedisLib.Receiver.ReceiverStates.States.Base;
-using RedisLib.Sender.Context;
 using System;
-using System.Configuration;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RedisLib.Receiver.ReceiverStates.States.Activity
 {
-    class InitialState : BaseState
+    class InitialState<T> : BaseState<T>
     {
-        #region Members
-        private SenderContext senderContext;
-        #endregion
-
         #region Constructor
-        public InitialState(ReceiverContext logContext)
+        public InitialState(ReceiverContext<T> logContext)
         {
             _ctx = logContext;
-        }
-
-        public InitialState(SenderContext senderContext)
-        {
-            this.senderContext = senderContext;
         }
         #endregion
 
@@ -35,35 +23,28 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
         #region Interface Methods
         public override void Execute()
         {
-#if DEBUG
-            Console.WriteLine("InitialState");
-#endif
-
-            string conString = ConfigurationManager.ConnectionStrings["redis"].ConnectionString;
-
             //step1. Initial SyncUp message connection and channel
-            this.MsgConnection = new Rediser(conString);
-            this.MsgConnection.SubscribeMessage<ResourceRecord>(ChannelName.Sync_Message, rcd =>
-           {
-               ResourceRecord rcdTarget = this.ResourceTable.Records.FirstOrDefault(o => o.Id.Equals(rcd.Id));
-
-               if (rcdTarget == null)
-                   this.ResourceTable.Add(rcd);
-               else
-                   rcdTarget.Update(rcd); //update record
-           });
             this.MsgConnection.SubscribeMessage<string>(string.Format(ChannelName.ReceiveReply, this.ID), key =>
             {
                 this.DataConnection.BufferingKey(KeyName.KeyBuffer, key);
             });
 
-            //step2. publish self
-            ResourceRecord rcdSelf = new ResourceRecord { Id = ID, UpdateTime = DateTime.Now };
-            this.ResourceTable.Add(rcdSelf);
-            this.MsgConnection.PublishMessage<ResourceRecord>(ChannelName.Sync_Message, rcdSelf);
+            //step2. pick up node id
+            int candidateId = 0;
+            bool keyExist = this.DataConnection.KeyExist(KeyName.ReceiverRegistry);
+            if (keyExist)
+            {
+                IEnumerable<int> ieNodeIds = this.DataConnection.GetHashTable<int>(KeyName.ReceiverRegistry).Keys.Select(o => int.Parse(o)).OrderBy(o => o);
+                IEnumerable<int> ieComparer = Enumerable.Range(0, ieNodeIds.Max() + 1); //0~(max+1)
+                candidateId = ieComparer.Except<int>(ieNodeIds).First(); //pick up lake slot
+            }
+            this.NodeId = candidateId;
 
-            //step3. Initial Data connection
-            this.DataConnection = new Rediser(conString);
+            //step3. register node
+            this.DataConnection.SetHashTable<int>(KeyName.ReceiverRegistry, this.ID, this.NodeId);
+
+            //step4. register reply infor
+            this.DataConnection.SetHashTable<int>(KeyName.ReceiverReply, this.NodeId.ToString(), 0);
         }
 
         protected override void Dispose(bool disposing)

@@ -1,5 +1,4 @@
-﻿using RedisLib.Receiver.Constants;
-using RedisLib.Receiver.Context;
+﻿using RedisLib.Receiver.Context;
 using RedisLib.Receiver.Models;
 using RedisLib.Receiver.ReceiverStates.States.Base;
 using System;
@@ -8,12 +7,17 @@ using System.Linq;
 
 namespace RedisLib.Receiver.ReceiverStates.States.Activity
 {
-    class PrepareState : BaseState
+    class PrepareState<T> : BaseState<T>
     {
+        private enLogType[] _logTypes = new enLogType[3];
+
         #region Constructor
-        public PrepareState(ReceiverContext logContext)
+        public PrepareState(ReceiverContext<T> logContext)
         {
             this._ctx = logContext;
+            _logTypes[0] = enLogType.API;
+            _logTypes[1] = enLogType.BO;
+            _logTypes[2] = enLogType.System;
         }
         #endregion
 
@@ -21,46 +25,14 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
         public override string StateName => "PrepareState";
         #endregion
 
-        #region Private Methods
-        private ResourceRecord chooseTargetResource(string[] slotList)
-        {
-            ResourceRecord rcd = this.ResourceTable.Records.First(o => o.Id.Equals(this._ctx.ID));
-
-            Random rd = new Random(DateTime.Now.Millisecond);
-
-            IEnumerable<string> existResource = this.ResourceTable.Records.Where(o => !o.Equals(this.ID)).Select(o => o.Resource);
-
-            IEnumerable<string> newSlotList = slotList.Except(existResource);
-            if (newSlotList.Count() > 0)
-            {
-                int rn = rd.Next(0, newSlotList.Count());
-                rcd.Resource = newSlotList.ElementAt(rn);
-
-            }
-            rcd.AmountOfLog = 0; //reset
-
-            return rcd;
-        }
-        #endregion
-
         #region Interface Method
         public override void Execute()
         {
-#if DEBUG
-            Console.WriteLine("PrepareState");
-#endif
-
-            //step1. pick-up host
-            var slotList = new string[] { "systemlog", "bolog", "apilog" };
-            ResourceRecord rcd = chooseTargetResource(slotList);
-            rcd.UpdateTime = DateTime.Now; //reset
-
-#if DEBUG
-            Console.WriteLine("ResourceRecord: {0}", rcd.Resource);
-#endif
-
-            //step2. publish new inform to other nodes
-            MsgConnection.PublishMessage<ResourceRecord>(ChannelName.Sync_Message, rcd);
+            //step1. pick-up log type
+            IEnumerable<enLogType> executed = this.ExecutedRecords.ToArray();
+            enLogType candidate = _logTypes.Except(executed).First();
+            this.ExecutedRecords.Dequeue();
+            this.ExecutedRecords.Enqueue(candidate);
         }
 
         protected override void Dispose(bool disposing)
