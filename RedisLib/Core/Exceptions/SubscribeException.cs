@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RedisLib.Core.Exceptions
 {
+    [ExcludeFromCodeCoverage]
     public class SubscribeException : Exception
     {
         private const string _msg = "Log subscribing encounter error";

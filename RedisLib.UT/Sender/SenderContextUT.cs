@@ -8,20 +8,22 @@ using RedisLib.Sender.Models;
 using RedisLib.Sender.SenderStates.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace RedisLib.UT.Sender
 {
+    [ExcludeFromCodeCoverage]
     [TestFixture]
     public class SenderContextUT
     {
-        private SenderContext _ctx = null;
+        private SenderContext<object> _ctx = null;
         private List<ReceiverRecord> rcRecords = new List<ReceiverRecord>();
 
         [TestFixtureSetUp]
         public void Initial()
         {
-            _ctx = new SenderContext();
+            _ctx = new SenderContext<object>();
             _ctx.ReceiverTable.Receivers = rcRecords;
 
             _ctx.MsgConnection = Substitute.For<IRediser>();
@@ -203,7 +205,6 @@ namespace RedisLib.UT.Sender
             //Assert
             this._ctx.DataConnection.Received().Save(Arg.Is<string>(x => x.Split(':')[0].Equals("{BO/0}")), dataValue);
             this._ctx.DataConnection.Received().SetHashTable_Plus(KeyName.ReceiverReply, receiverId, 1);
-            this._ctx.MsgConnection.Received().PublishMessage<string>(string.Format(ChannelName.ReceiveReply, receiverId), Arg.Is<string>(x => x.Split(':')[0].Equals("{BO/0}")));
         }
 
         [Test]

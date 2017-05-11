@@ -1,6 +1,7 @@
 ﻿using RedisLib.Receiver.Context;
 using RedisLib.Receiver.ReceiverStates.States.Base;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RedisLib.Receiver.ReceiverStates.States.Activity
 {
@@ -22,19 +23,19 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
         {
             //do something
 
-            this.DataKey.Clear();
             this.DataObjs.Clear();
         }
 
+        [ExcludeFromCodeCoverage]
         protected override void Dispose(bool disposing)
         {
             if (!this.disposedValue) return;
 
-            if (this.DataKey != null) this.DataKey.Clear();
             if (this.DataObjs != null) this.DataObjs.Clear();
             if (this._ctx != null) this._ctx = null;
         }
 
+        [ExcludeFromCodeCoverage]
         public override void Dispose()
         {
             Dispose(true);

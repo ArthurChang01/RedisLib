@@ -4,14 +4,15 @@ using RedisLib.Sender.Models;
 using RedisLib.Sender.SenderStates.States.Base;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace RedisLib.Sender.SenderStates.States.Activity
 {
-    class InitialState : BaseState
+    class InitialState<T> : BaseState<T>
     {
         #region Constructor
-        public InitialState(SenderContext ctx)
+        public InitialState(SenderContext<T> ctx)
         {
             this._ctx = ctx;
         }
@@ -21,33 +22,35 @@ namespace RedisLib.Sender.SenderStates.States.Activity
         public override string StateName => "InitialState";
         #endregion
 
-        #region Interface Methods
-        public override void Execute()
+        #region Private Methods
+        private IList<ReceiverRecord> getReceiverRegistryInfo()
         {
-            //step1. Concret receiver registry information
+            IList<ReceiverRecord> records = new List<ReceiverRecord>() {
+                new ReceiverRecord { ReceiverNodeId = 0, ReceiverId = string.Empty, UnReplyCounter = 0 }
+            };
+
             bool keyExist = this.DataConnection.KeyExist(KeyName.ReceiverRegistry);
 
-            if (keyExist)
-                this.ReceiverTable.Receivers =
-                     this.DataConnection.GetHashTable<IDictionary<string, int>>(KeyName.ReceiverRegistry)
+            if (!keyExist) return records;
+
+            records = this.DataConnection.GetHashTable<IDictionary<string, int>>(KeyName.ReceiverRegistry)
                           .SelectMany(o => o.Value)
                           .Select(o =>
                             new ReceiverRecord { ReceiverId = o.Key, ReceiverNodeId = o.Value }).ToList();
-            else //Default is 0
-                this.ReceiverTable.Receivers = new List<ReceiverRecord> {
-                    new ReceiverRecord { ReceiverNodeId = 0, ReceiverId = string.Empty, UnReplyCounter = 0 } };
 
-            //step2. Concret receiver 
-            keyExist = this.DataConnection.KeyExist(KeyName.ReceiverReply);
+            return records;
+        }
 
-            if (keyExist)
-            {
-                IEnumerable<KeyValuePair<string, int>> replyTable =
+        private IList<ReceiverRecord> getFullReceiverInfo(IEnumerable<ReceiverRecord> registryInfo)
+        {
+            IList<ReceiverRecord> records = null;
+
+            IEnumerable<KeyValuePair<string, int>> replyTable =
                     this.DataConnection.GetHashTable<IDictionary<string, int>>(KeyName.ReceiverReply)
                           .SelectMany(o => o.Value);
 
-                this.ReceiverTable.Receivers =
-                    (from registry in this.ReceiverTable.Receivers
+            records =
+                    (from registry in registryInfo
                      join reply in replyTable
                      on registry.ReceiverNodeId.ToString() equals reply.Key
                      select new ReceiverRecord
@@ -55,16 +58,33 @@ namespace RedisLib.Sender.SenderStates.States.Activity
                          ReceiverId = registry.ReceiverId,
                          ReceiverNodeId = registry.ReceiverNodeId,
                          UnReplyCounter = reply.Value
-                     }).ToList();
-            }
+                     }
+                     ).ToList();
+
+            return records;
+        }
+        #endregion
+
+        #region Interface Methods
+        public override void Execute()
+        {
+            //step1. Concret receiver registry information
+            this.ReceiverTable.Receivers = getReceiverRegistryInfo();
+
+            //step2. Concret receiver 
+            bool keyExist = this.DataConnection.KeyExist(KeyName.ReceiverReply);
+
+            if (keyExist)
+                this.ReceiverTable.Receivers = getFullReceiverInfo(this.ReceiverTable.Receivers);
 
             //step3. Subscribe Channel
-            this._ctx.MsgConnection.SubscribeMessage<string>("ReceiverRegistry", msg =>
+            this._ctx.MsgConnection.SubscribeMessage<string>(ChannelName.ReceiverRegistry, msg =>
             {
                 //TODO: Upsert node information
             });
         }
 
+        [ExcludeFromCodeCoverage]
         protected override void Dispose(bool disposing)
         {
             if (!this.disposedValue) return;
@@ -72,6 +92,7 @@ namespace RedisLib.Sender.SenderStates.States.Activity
             if (this._ctx != null) this._ctx = null;
         }
 
+        [ExcludeFromCodeCoverage]
         public override void Dispose()
         {
             Dispose(true);

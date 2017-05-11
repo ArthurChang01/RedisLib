@@ -3,6 +3,7 @@ using RedisLib.Receiver.Models;
 using RedisLib.Receiver.ReceiverStates.States.Base;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace RedisLib.Receiver.ReceiverStates.States.Activity
@@ -31,10 +32,17 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
             //step1. pick-up log type
             IEnumerable<enLogType> executed = this.ExecutedRecords.ToArray();
             enLogType candidate = _logTypes.Except(executed).First();
-            this.ExecutedRecords.Dequeue();
-            this.ExecutedRecords.Enqueue(candidate);
+            if (executed.Count() > 0)
+                this.ExecutedRecords.Dequeue(); //Pop-up oldest 
+            this.ExecutedRecords.Enqueue(candidate); //Push-In newest
+
+            //step2. generate key pattern
+            string keyPattern = string.Format(@"{{{0}/{1}}}:*", candidate.ToString(), this.NodeId);
+            IEnumerable<T> objs = this.DataConnection.Fetch<T>(keyPattern);
+            if (objs != null) this.DataObjs.AddRange(objs);
         }
 
+        [ExcludeFromCodeCoverage]
         protected override void Dispose(bool disposing)
         {
             if (!this.disposedValue) return;
@@ -42,6 +50,7 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
             if (this._ctx != null) this._ctx = null;
         }
 
+        [ExcludeFromCodeCoverage]
         public override void Dispose()
         {
             Dispose(true);

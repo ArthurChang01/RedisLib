@@ -1,8 +1,10 @@
 ﻿using StackExchange.Redis;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RedisLib.Core.Factories.Connction
 {
+    [ExcludeFromCodeCoverage]
     class ConnectionFactory
     {
         public static IConnectionMultiplexer ConcretConnection(string conString = "")

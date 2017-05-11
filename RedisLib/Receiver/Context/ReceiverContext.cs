@@ -4,6 +4,7 @@ using RedisLib.Receiver.ReceiverStates.Interfaces;
 using RedisLib.Receiver.ReceiverStates.States.Activity;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RedisLib.Receiver.Context
 {
@@ -13,8 +14,8 @@ namespace RedisLib.Receiver.Context
         private bool disposedValue = false; // To detect redundant calls
         private string _Id = Guid.NewGuid().ToString();
         private List<T> _dataObjs = new List<T>();
-        private List<string> _dataKey = new List<string>();
         private Queue<enLogType> _execRecords = new Queue<enLogType>(2);
+        private IReceiverState _currentState = null;
         private IDictionary<string, IReceiverState> _receiverState = new Dictionary<string, IReceiverState>();
 
         private static IRediser _msgConnection = null;
@@ -26,7 +27,6 @@ namespace RedisLib.Receiver.Context
         {
             _receiverState.Add("InitialState", new InitialState<T>(this));
             _receiverState.Add("PrepareState", new PrepareState<T>(this));
-            _receiverState.Add("FetchDataState", new FetchDataState<T>(this));
             _receiverState.Add("ProcessState", new ProcessState<T>(this));
         }
         #endregion
@@ -36,15 +36,15 @@ namespace RedisLib.Receiver.Context
 
         public int NodeId { get; set; }
 
+        public IReceiverState CurrentState => this._currentState;
+
         public IReceiverState ReceiverState { get; set; }
 
         public IDictionary<string, IReceiverState> LogStateTable => this._receiverState;
 
         public Queue<enLogType> ExecutedRecords => this._execRecords;
 
-        public List<T> DataObjs => this._dataObjs;
-
-        public List<string> DataKey => this._dataKey;
+        public List<T> DataObjs { get { return this._dataObjs; } set { this._dataObjs = value; } }
 
         public IRediser MsgConnection { get { return _msgConnection; } set { _msgConnection = value; } }
 
@@ -53,20 +53,23 @@ namespace RedisLib.Receiver.Context
 
         public void Run()
         {
-            LogStateTable["InitialState"].Execute();
+            this._currentState = LogStateTable["InitialState"];
+            this._currentState.Execute();
 
-            LogStateTable["PrepareState"].Execute();
-
-            LogStateTable["FetchDataState"].Execute();
+            this._currentState = LogStateTable["PrepareState"];
+            this._currentState.Execute();
 
             if (this.DataObjs.Count > 0)
             {
-                LogStateTable["ProcessState"].Execute();
+                this._currentState = LogStateTable["ProcessState"];
+                this._currentState.Execute();
             }
 
         }
 
         #region IDisposable Support
+
+        [ExcludeFromCodeCoverage]
         protected void Dispose(bool disposing)
         {
             if (!this.disposedValue) return;
@@ -84,6 +87,7 @@ namespace RedisLib.Receiver.Context
             this._dataObjs = null;
         }
 
+        [ExcludeFromCodeCoverage]
         public void Dispose()
         {
             Dispose(true);

@@ -3,9 +3,11 @@ using StackExchange.Redis;
 using StackExchange.Redis.Extensions.Core;
 using StackExchange.Redis.Extensions.Jil;
 using StackExchange.Redis.Extensions.Protobuf;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RedisLib.Core.Factories.Client
 {
+    [ExcludeFromCodeCoverage]
     class RedisClientFactory
     {
         public static ICacheClient ConcretRedisClient(IConnectionMultiplexer con, SerializerType serializerType = SerializerType.Json)

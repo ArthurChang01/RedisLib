@@ -1,5 +1,8 @@
-﻿namespace RedisLib.Sender.Models
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace RedisLib.Sender.Models
 {
+    [ExcludeFromCodeCoverage]
     public class ReceiverRecord
     {
         public int ReceiverNodeId { get; set; }

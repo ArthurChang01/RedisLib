@@ -3,9 +3,11 @@ using RedisLib.Receiver.Context;
 using RedisLib.Receiver.Models;
 using RedisLib.Receiver.ReceiverStates.Interfaces;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RedisLib.Receiver.ReceiverStates.States.Base
 {
+    [ExcludeFromCodeCoverage]
     abstract class BaseState<T> : IReceiverState
     {
         #region Member
@@ -20,9 +22,7 @@ namespace RedisLib.Receiver.ReceiverStates.States.Base
 
         protected int NodeId { get { return this._ctx.NodeId; } set { this._ctx.NodeId = value; } }
 
-        protected List<T> DataObjs => this._ctx.DataObjs;
-
-        protected List<string> DataKey => this._ctx.DataKey;
+        protected List<T> DataObjs { get { return this._ctx.DataObjs; } set { this._ctx.DataObjs = value; } }
 
         protected Queue<enLogType> ExecutedRecords => this._ctx.ExecutedRecords;
 

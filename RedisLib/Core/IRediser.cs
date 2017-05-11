@@ -1,8 +1,8 @@
-﻿using System;
+﻿using StackExchange.Redis;
+using StackExchange.Redis.Extensions.Core;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using StackExchange.Redis;
-using StackExchange.Redis.Extensions.Core;
 
 namespace RedisLib.Core
 {
@@ -15,7 +15,7 @@ namespace RedisLib.Core
         Task BufferingKeyAsyncWithTran(string bufferName, string key, ITransaction tran);
         ITransaction CreateTransaction();
         Task ExecuteTransaction(ITransaction tran);
-        IEnumerable<string> Fetch(string keyPattern);
+        IEnumerable<T> Fetch<T>(string keyPattern);
         Task<IEnumerable<T>> FetchAsync<T>(string keyPattern);
         Task<IEnumerable<T>> FetchAsyncWithTran<T>(string keyPattern, ITransaction tran);
         IEnumerable<string> GetBufferingKeyByRange(string bufferName, int start, int end);

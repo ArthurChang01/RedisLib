@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace RedisLib.Sender.Models
 {
+    [ExcludeFromCodeCoverage]
     public class ReceiverTable
     {
         private int _nodeId = -1;

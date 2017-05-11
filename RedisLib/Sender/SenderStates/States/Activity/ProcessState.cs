@@ -3,14 +3,15 @@ using RedisLib.Sender.Context;
 using RedisLib.Sender.Models;
 using RedisLib.Sender.SenderStates.States.Base;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace RedisLib.Sender.SenderStates.States.Activity
 {
-    class ProcessState : BaseState
+    class ProcessState<T> : BaseState<T>
     {
         #region Constructor
-        public ProcessState(SenderContext ctx)
+        public ProcessState(SenderContext<T> ctx)
         {
             this._ctx = ctx;
         }
@@ -28,23 +29,17 @@ namespace RedisLib.Sender.SenderStates.States.Activity
             string receiverId = target == null ? string.Empty : target.ReceiverId;
 
             //step1. Save data
-            this.DataConnection.Save(this.DataKey, this.DataValue);
-            this.DataConnection.SetHashTable_Plus(KeyName.ReceiverReply, receiverId, 1);
-
-            //step2. Publish receiver's reply
-            if (!string.IsNullOrEmpty(receiverId))
-                this.MsgConnection.PublishMessage<string>(
-                    string.Format(ChannelName.ReceiveReply, receiverId), this.DataKey);
-
+            this.DataConnection.Save<T>(this.DataKey, this.DataValue);
+            this.DataConnection.SetHashTable_Plus(KeyName.ReceiverReply, receiverId);
         }
 
+        [ExcludeFromCodeCoverage]
         protected override void Dispose(bool disposing)
         {
             if (!this.disposedValue) return;
-
-            if (this.Users != null) this.Users.Clear();
         }
 
+        [ExcludeFromCodeCoverage]
         public override void Dispose()
         {
             Dispose(true);

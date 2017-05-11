@@ -93,7 +93,6 @@
     <Compile Include="Receiver\Context\ReceiverContext.cs" />
     <Compile Include="Receiver\Models\enLogType.cs" />
     <Compile Include="Receiver\ReceiverStates\Interfaces\IReceiverState.cs" />
-    <Compile Include="Receiver\ReceiverStates\States\Activity\FetchDataState.cs" />
     <Compile Include="Receiver\ReceiverStates\States\Activity\InitialState.cs" />
     <Compile Include="Receiver\ReceiverStates\States\Activity\PrepareState.cs" />
     <Compile Include="Receiver\ReceiverStates\States\Activity\ProcessState.cs" />

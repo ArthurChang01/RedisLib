@@ -3,13 +3,15 @@ using RedisLib.Sender.Context;
 using RedisLib.Sender.Models;
 using RedisLib.Sender.SenderStates.Interfaces;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RedisLib.Sender.SenderStates.States.Base
 {
-    abstract class BaseState : ISenderState
+    [ExcludeFromCodeCoverage]
+    abstract class BaseState<T> : ISenderState
     {
         #region Member
-        protected SenderContext _ctx = null;
+        protected SenderContext<T> _ctx = null;
         protected bool disposedValue = false; // To detect redundant calls
         #endregion
 
@@ -18,13 +20,11 @@ namespace RedisLib.Sender.SenderStates.States.Base
 
         protected string ID => this._ctx.ID;
 
-        protected List<string> Users { get { return this._ctx.Users; } }
-
         protected ReceiverTable ReceiverTable => this._ctx.ReceiverTable;
 
         protected string DataKey { get { return this._ctx.DataKey; } set { this._ctx.DataKey = value; } }
 
-        protected object DataValue => this._ctx.DataValue;
+        protected T DataValue => this._ctx.DataValue;
 
         protected enLogType LogType => this._ctx.LogType;
 

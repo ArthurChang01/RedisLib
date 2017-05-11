@@ -3,6 +3,7 @@ using RedisLib.Receiver.Context;
 using RedisLib.Receiver.ReceiverStates.States.Base;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace RedisLib.Receiver.ReceiverStates.States.Activity
@@ -20,33 +21,37 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
         public override string StateName => "InitialState";
         #endregion
 
+        #region Private Methods
+        private int getCandidateId()
+        {
+            int candidateId = 0;
+            bool keyExist = this.DataConnection.KeyExist(KeyName.ReceiverRegistry);
+
+            if (!keyExist) return candidateId;
+
+            IEnumerable<int> availabler = this.DataConnection.GetHashTable<int>(KeyName.ReceiverReply).Where(o => o.Value <= 20).Select(o => int.Parse(o.Key));
+
+            IEnumerable<int> ieComparer = Enumerable.Range(0, availabler.Max() + 1); //0~(max+1)
+            candidateId = ieComparer.Except<int>(availabler).First(); //pick up lake slot
+
+            return candidateId;
+        }
+        #endregion
+
         #region Interface Methods
         public override void Execute()
         {
-            //step1. Initial SyncUp message connection and channel
-            this.MsgConnection.SubscribeMessage<string>(string.Format(ChannelName.ReceiveReply, this.ID), key =>
-            {
-                this.DataConnection.BufferingKey(KeyName.KeyBuffer, key);
-            });
+            //step1. pick up node id
+            this.NodeId = getCandidateId();
 
-            //step2. pick up node id
-            int candidateId = 0;
-            bool keyExist = this.DataConnection.KeyExist(KeyName.ReceiverRegistry);
-            if (keyExist)
-            {
-                IEnumerable<int> ieNodeIds = this.DataConnection.GetHashTable<int>(KeyName.ReceiverRegistry).Keys.Select(o => int.Parse(o)).OrderBy(o => o);
-                IEnumerable<int> ieComparer = Enumerable.Range(0, ieNodeIds.Max() + 1); //0~(max+1)
-                candidateId = ieComparer.Except<int>(ieNodeIds).First(); //pick up lake slot
-            }
-            this.NodeId = candidateId;
-
-            //step3. register node
+            //step2. register node
             this.DataConnection.SetHashTable<int>(KeyName.ReceiverRegistry, this.ID, this.NodeId);
 
-            //step4. register reply infor
+            //step3. register reply infor
             this.DataConnection.SetHashTable<int>(KeyName.ReceiverReply, this.NodeId.ToString(), 0);
         }
 
+        [ExcludeFromCodeCoverage]
         protected override void Dispose(bool disposing)
         {
             if (!this.disposedValue) return;
@@ -54,6 +59,7 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
             if (this._ctx != null) this._ctx = null;
         }
 
+        [ExcludeFromCodeCoverage]
         public override void Dispose()
         {
             Dispose(true);

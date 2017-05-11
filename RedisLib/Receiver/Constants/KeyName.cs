@@ -1,6 +1,9 @@
-﻿namespace RedisLib.Receiver.Constants
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace RedisLib.Receiver.Constants
 {
-    static class KeyName
+    [ExcludeFromCodeCoverage]
+    public static class KeyName
     {
         public static string KeyBuffer = "KeyBuffer";
         public static string ReceiverRegistry = "ReceiverRegistry";

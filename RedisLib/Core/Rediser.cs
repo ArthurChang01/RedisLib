@@ -7,11 +7,13 @@ using StackExchange.Redis;
 using StackExchange.Redis.Extensions.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace RedisLib.Core
 {
+    [ExcludeFromCodeCoverage]
     public class Rediser : IRediser
     {
         #region Members
@@ -177,14 +179,14 @@ namespace RedisLib.Core
         #endregion
 
         #region Fetch data
-        public IEnumerable<string> Fetch(string keyPattern)
+        public IEnumerable<T> Fetch<T>(string keyPattern)
         {
-            IEnumerable<string> result = null;
+            IEnumerable<T> result = null;
 
             try
             {
                 IEnumerable<string> ieKeys = this._client.SearchKeys(keyPattern);
-                result = this._client.GetAll<string>(ieKeys).Values;
+                result = this._client.GetAll<T>(ieKeys).Values;
                 this._client.RemoveAll(ieKeys);
             }
             catch (Exception ex)

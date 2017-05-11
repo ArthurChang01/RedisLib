@@ -4,20 +4,20 @@ using RedisLib.Sender.SenderStates.Interfaces;
 using RedisLib.Sender.SenderStates.States.Activity;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RedisLib.Sender.Context
 {
-    public class SenderContext
+    public class SenderContext<T>
     {
         #region Members
         private string _id = Guid.NewGuid().ToString();
         private ISenderState _currentState = null;
-        private List<string> _users = new List<string>();
         private IDictionary<string, ISenderState> _senderState = new Dictionary<string, ISenderState>();
         private bool disposedValue;
         private ReceiverTable _receiver = new ReceiverTable();
         private string _dataKey = string.Empty;
-        private object _dataValue = null;
+        private T _dataValue = default(T);
         private enLogType _logType;
 
         private static IRediser _msgConnection = null;
@@ -26,17 +26,17 @@ namespace RedisLib.Sender.Context
 
         public SenderContext()
         {
-            _senderState.Add("InitialState", new InitialState(this));
-            _senderState.Add("PrepareState", new PrepareState(this));
-            _senderState.Add("ProcessState", new ProcessState(this));
+            this.disposedValue = true;
+            this._senderState.Add("InitialState", new InitialState<T>(this));
+            this._senderState.Add("PrepareState", new PrepareState<T>(this));
+            this._senderState.Add("ProcessState", new ProcessState<T>(this));
         }
 
         #region Property
         public string ID => this._id;
         public string DataKey { get; set; }
-        public object DataValue => this._dataValue;
+        public T DataValue => this._dataValue;
         public ISenderState CurrentState => this._currentState;
-        public List<string> Users => this._users;
         public enLogType LogType => this._logType;
         public ReceiverTable ReceiverTable => this._receiver;
         public IRediser MsgConnection { get { return _msgConnection; } set { _msgConnection = value; } }
@@ -49,7 +49,7 @@ namespace RedisLib.Sender.Context
             this._currentState.Execute();
         }
 
-        public void Send(enLogType logType, object dataValue)
+        public void Send(enLogType logType, T dataValue)
         {
             this._logType = logType;
             this._dataValue = dataValue;
@@ -62,6 +62,8 @@ namespace RedisLib.Sender.Context
         }
 
         #region IDisposable Support
+
+        [ExcludeFromCodeCoverage]
         protected void Dispose(bool disposing)
         {
             if (!this.disposedValue) return;
@@ -73,12 +75,11 @@ namespace RedisLib.Sender.Context
             _dataConnection = null;
 
             this._senderState.Clear();
-            this._users.Clear();
 
             this._senderState = null;
-            this._users = null;
         }
 
+        [ExcludeFromCodeCoverage]
         public void Dispose()
         {
             Dispose(true);

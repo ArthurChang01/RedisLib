@@ -2,14 +2,15 @@
 using RedisLib.Sender.SenderStates.States.Base;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace RedisLib.Sender.SenderStates.States.Activity
 {
-    class PrepareState : BaseState
+    class PrepareState<T> : BaseState<T>
     {
         #region Constructor
-        public PrepareState(SenderContext ctx)
+        public PrepareState(SenderContext<T> ctx)
         {
             this._ctx = ctx;
         }
@@ -19,22 +20,36 @@ namespace RedisLib.Sender.SenderStates.States.Activity
         public override string StateName => "PrepareState";
         #endregion
 
-        #region Interface Methods
-        public override void Execute()
+        #region Private Methods
+        private int getNodeId()
         {
-            //step1. pick up next candidate node_Id
+            int nodeId = 0;
+
+            //get existing nodeId list
             List<int> nodeIds = this.ReceiverTable.Receivers
                                 .Select(o => o.ReceiverNodeId)
                                 .Distinct()
                                 .OrderBy(o => o)
                                 .ToList<int>();
+
+            //get last nodeId index
             int lastCandiateIndex = nodeIds.FindIndex(o => o == this.ReceiverTable.CandidateNodeId);
             int candiateIndex = (nodeIds.Count() == 0) ?
                                             0 :
                                             (lastCandiateIndex + 1) % nodeIds.Count();
-            this.ReceiverTable.CandidateNodeId = candiateIndex == 0 ?
-                                                                             0 :
-                                                                             nodeIds[candiateIndex];
+
+            //get nodeId
+            nodeId = (candiateIndex == 0) ? 0 : nodeIds[candiateIndex];
+
+            return nodeId;
+        }
+        #endregion
+
+        #region Interface Methods
+        public override void Execute()
+        {
+            //step1. pick up next candidate node_Id
+            this.ReceiverTable.CandidateNodeId = getNodeId();
 
             //step2. generate key
             this.DataKey =
@@ -45,6 +60,7 @@ namespace RedisLib.Sender.SenderStates.States.Activity
                     Guid.NewGuid().ToString());
         }
 
+        [ExcludeFromCodeCoverage]
         protected override void Dispose(bool disposing)
         {
             if (!this.disposedValue) return;
@@ -52,6 +68,7 @@ namespace RedisLib.Sender.SenderStates.States.Activity
             if (this._ctx != null) this._ctx = null;
         }
 
+        [ExcludeFromCodeCoverage]
         public override void Dispose()
         {
             Dispose(true);

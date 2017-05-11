@@ -1,6 +1,9 @@
-﻿namespace RedisLib.Receiver.Constants
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace RedisLib.Receiver.Constants
 {
-    static class ChannelName
+    [ExcludeFromCodeCoverage]
+    public static class ChannelName
     {
         public static string ReceiveReply = "ReceiveReply_{0}";
         public static string Sync_Message = "Sync_Message";
