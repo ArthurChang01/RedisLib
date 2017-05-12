@@ -25,7 +25,7 @@ namespace RedisLib.Sender.SenderStates.States.Activity
         public override void Execute()
         {
             ReceiverRecord target = this.ReceiverTable.Receivers.FirstOrDefault(
-                    o => o.ReceiverNodeId.Equals(this.ReceiverTable.CandidateNodeId));
+                    o => o.ReceiverNodeId.Equals(this.ReceiverTable.CandidateInfo[this.LogType]));
             string receiverId = target == null ? string.Empty : target.ReceiverId;
 
             //step1. Save data

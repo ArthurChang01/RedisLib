@@ -1,4 +1,5 @@
-﻿using RedisLib.Receiver.Context;
+﻿using RedisLib.Receiver.Constants;
+using RedisLib.Receiver.Context;
 using RedisLib.Receiver.ReceiverStates.States.Base;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -23,6 +24,8 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
         {
             //do something
 
+            //step final. clean
+            this.DataConnection.SetHashTable_Plus(KeyName.ReceiverReply, this.ID, -1);
             this.DataObjs.Clear();
         }
 

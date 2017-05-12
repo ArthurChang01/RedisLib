@@ -33,7 +33,7 @@ namespace RedisLib.Sender.SenderStates.States.Activity
                                 .ToList<int>();
 
             //get last nodeId index
-            int lastCandiateIndex = nodeIds.FindIndex(o => o == this.ReceiverTable.CandidateNodeId);
+            int lastCandiateIndex = nodeIds.FindIndex(o => o == this.ReceiverTable.CandidateInfo[this.LogType]);
             int candiateIndex = (nodeIds.Count() == 0) ?
                                             0 :
                                             (lastCandiateIndex + 1) % nodeIds.Count();
@@ -49,14 +49,14 @@ namespace RedisLib.Sender.SenderStates.States.Activity
         public override void Execute()
         {
             //step1. pick up next candidate node_Id
-            this.ReceiverTable.CandidateNodeId = getNodeId();
+            this.ReceiverTable.CandidateInfo[this.LogType] = getNodeId();
 
             //step2. generate key
             this.DataKey =
                 string.Format(
                     @"{{{0}/{1}}}:{2}",
                     this.LogType.ToString(),
-                    this.ReceiverTable.CandidateNodeId,
+                    this.ReceiverTable.CandidateInfo[this.LogType],
                     Guid.NewGuid().ToString());
         }
 

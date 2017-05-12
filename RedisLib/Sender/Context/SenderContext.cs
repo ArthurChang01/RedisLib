@@ -15,7 +15,7 @@ namespace RedisLib.Sender.Context
         private ISenderState _currentState = null;
         private IDictionary<string, ISenderState> _senderState = new Dictionary<string, ISenderState>();
         private bool disposedValue;
-        private ReceiverTable _receiver = new ReceiverTable();
+        private ReceiverTable _receivers = new ReceiverTable();
         private string _dataKey = string.Empty;
         private T _dataValue = default(T);
         private enLogType _logType;
@@ -30,6 +30,10 @@ namespace RedisLib.Sender.Context
             this._senderState.Add("InitialState", new InitialState<T>(this));
             this._senderState.Add("PrepareState", new PrepareState<T>(this));
             this._senderState.Add("ProcessState", new ProcessState<T>(this));
+
+            this.ReceiverTable.CandidateInfo = new Dictionary<enLogType, int> {
+                { enLogType.API,-1}, { enLogType.BO,-1}, { enLogType.System,-1},
+            };
         }
 
         #region Property
@@ -38,7 +42,7 @@ namespace RedisLib.Sender.Context
         public T DataValue => this._dataValue;
         public ISenderState CurrentState => this._currentState;
         public enLogType LogType => this._logType;
-        public ReceiverTable ReceiverTable => this._receiver;
+        public ReceiverTable ReceiverTable => this._receivers;
         public IRediser MsgConnection { get { return _msgConnection; } set { _msgConnection = value; } }
         public IRediser DataConnection { get { return _dataConnection; } set { _dataConnection = value; } }
         #endregion

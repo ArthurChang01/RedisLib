@@ -177,7 +177,7 @@ namespace RedisLib.UT.Sender
             rcRecords.Add(new ReceiverRecord { ReceiverId = Guid.NewGuid().ToString(), ReceiverNodeId = 1, UnReplyCounter = 0 });
             rcRecords.Add(new ReceiverRecord { ReceiverId = Guid.NewGuid().ToString(), ReceiverNodeId = 3, UnReplyCounter = 0 });
             this._ctx.ReceiverTable.Receivers = rcRecords;
-            this._ctx.ReceiverTable.CandidateNodeId = 1;
+            this._ctx.ReceiverTable.CandidateInfo = new Dictionary<enLogType, int> { { enLogType.API,-1},{ enLogType.BO,1},{ enLogType.System,-1 } };
 
             //Act
             this._ctx.Send(enLogType.BO, new object());
@@ -197,7 +197,7 @@ namespace RedisLib.UT.Sender
             string receiverId = Guid.NewGuid().ToString();
 
             rcRecords.Add(new ReceiverRecord { ReceiverId = receiverId, ReceiverNodeId = 0, UnReplyCounter = 0 });
-            this._ctx.ReceiverTable.CandidateNodeId = 0;
+            this._ctx.ReceiverTable.CandidateInfo = new Dictionary<enLogType, int> { { enLogType.API, -1 }, { enLogType.BO, 1 }, { enLogType.System, -1 } };
 
             //Act
             this._ctx.Send(enLogType.BO, dataValue);
@@ -214,7 +214,7 @@ namespace RedisLib.UT.Sender
             object dataValue = new object();
 
             this._ctx.ReceiverTable.Receivers = rcRecords;
-            this._ctx.ReceiverTable.CandidateNodeId = 0;
+            this._ctx.ReceiverTable.CandidateInfo = new Dictionary<enLogType, int> { { enLogType.API, -1 }, { enLogType.BO, 0 }, { enLogType.System, -1 } };
 
             //Act
             this._ctx.Send(enLogType.BO, dataValue);
