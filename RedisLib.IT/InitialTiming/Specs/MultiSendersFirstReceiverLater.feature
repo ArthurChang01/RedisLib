@@ -1,7 +1,7 @@
 ﻿Feature: MultiSendersFirstReceiverLater
 	In order to make sure system is stable
 	As a log system
-	I want to make sure in different multi-sender/receiver initiate timing everything is be alright
+	I initial multi sender first and then I initial a receiver later
 
 @MultiSendersFirstReceiverLater
 Scenario: Multi-sender initiate before a receiver

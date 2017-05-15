@@ -31,8 +31,8 @@ namespace RedisLib.IT.InitialTiming.Specs
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "MultiSendersFirstReceiverLater", "\tIn order to make sure system is stable\r\n\tAs a log system\r\n\tI want to make sure i" +
-                    "n different multi-sender/receiver initiate timing everything is be alright", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "MultiSendersFirstReceiverLater", "\tIn order to make sure system is stable\r\n\tAs a log system\r\n\tI initial multi sende" +
+                    "r first and then I initial a receiver later", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         

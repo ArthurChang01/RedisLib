@@ -31,9 +31,8 @@ namespace RedisLib.IT.InitialTiming.Specs
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "MultiSendersLaterMultiReceiversFirst", "\tIn order to make sure system is stable\r\n\tAs a log system\r\n\tI want to make sure i" +
-                    "n different multi-sender/multi-receiver initiate timing everything is be alright" +
-                    "", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "MultiSendersLaterMultiReceiversFirst", "\tIn order to make sure system is stable\r\n\tAs a log system\r\n\tI initial multi recei" +
+                    "ver first", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -67,11 +66,11 @@ namespace RedisLib.IT.InitialTiming.Specs
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Multi-receiver initiate before multi-sender")]
-        [NUnit.Framework.CategoryAttribute("MultiSendersLaterMultiReceiversFirst")]
+        [NUnit.Framework.CategoryAttribute("mytag")]
         public virtual void Multi_ReceiverInitiateBeforeMulti_Sender()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Multi-receiver initiate before multi-sender", new string[] {
-                        "MultiSendersLaterMultiReceiversFirst"});
+                        "mytag"});
 #line 7
 this.ScenarioSetup(scenarioInfo);
 #line 8

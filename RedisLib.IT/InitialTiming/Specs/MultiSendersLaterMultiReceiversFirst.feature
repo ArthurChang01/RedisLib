@@ -1,9 +1,9 @@
 ﻿Feature: MultiSendersLaterMultiReceiversFirst
 	In order to make sure system is stable
 	As a log system
-	I want to make sure in different multi-sender/multi-receiver initiate timing everything is be alright
+	I initial multi receiver first
 
-@MultiSendersLaterMultiReceiversFirst
+@mytag
 Scenario: Multi-receiver initiate before multi-sender
 	Given Multi-receiver have been initiated
 	And This multi-receiver are waiting for tirgger
