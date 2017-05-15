@@ -37,8 +37,8 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
             this.ExecutedRecords.Enqueue(candidate); //Push-In newest
 
             //step2. generate key pattern
-            string keyPattern = string.Format(@"{{{0}/{1}}}:*", candidate.ToString(), this.NodeId);
-            IEnumerable<T> objs = this.DataConnection.Fetch<T>(keyPattern);
+            this.Key = string.Format(@"{{{0}/{1}}}:*", candidate.ToString(), this.NodeId);
+            IEnumerable<T> objs = this.DataConnection.Fetch<T>(this.Key);
             if (objs != null) this.DataObjs.AddRange(objs);
         }
 

@@ -11,6 +11,8 @@ namespace RedisLib.Sender.SenderStates.States.Activity
 {
     class InitialState<T> : BaseState<T>
     {
+        private static readonly object _syncObj = new object();
+
         #region Constructor
         public InitialState(SenderContext<T> ctx)
         {
@@ -26,15 +28,14 @@ namespace RedisLib.Sender.SenderStates.States.Activity
         private IList<ReceiverRecord> getReceiverRegistryInfo()
         {
             IList<ReceiverRecord> records = new List<ReceiverRecord>() {
-                new ReceiverRecord { ReceiverNodeId = 0, ReceiverId = string.Empty, UnReplyCounter = 0 }
+                new ReceiverRecord { ReceiverNodeId = 0, ReceiverId = "0", UnReplyCounter = 0 }
             };
 
             bool keyExist = this.DataConnection.KeyExist(KeyName.ReceiverRegistry);
 
             if (!keyExist) return records;
 
-            records = this.DataConnection.GetHashTable<IDictionary<string, int>>(KeyName.ReceiverRegistry)
-                          .SelectMany(o => o.Value)
+            records = this.DataConnection.GetHashTable<int>(KeyName.ReceiverRegistry)
                           .Select(o =>
                             new ReceiverRecord { ReceiverId = o.Key, ReceiverNodeId = o.Value }).ToList();
 
@@ -46,8 +47,7 @@ namespace RedisLib.Sender.SenderStates.States.Activity
             IList<ReceiverRecord> records = null;
 
             IEnumerable<KeyValuePair<string, int>> replyTable =
-                    this.DataConnection.GetHashTable<IDictionary<string, int>>(KeyName.ReceiverReply)
-                          .SelectMany(o => o.Value);
+                    this.DataConnection.GetHashTable<int>(KeyName.ReceiverReply);
 
             records =
                     (from registry in registryInfo
@@ -78,9 +78,12 @@ namespace RedisLib.Sender.SenderStates.States.Activity
                 this.ReceiverTable.Receivers = getFullReceiverInfo(this.ReceiverTable.Receivers);
 
             //step3. Subscribe Channel
-            this._ctx.MsgConnection.SubscribeMessage<string>(ChannelName.ReceiverRegistry, msg =>
+            this._ctx.MsgConnection.SubscribeMessage<ReceiverRecord>(ChannelName.ReceiverRegistry, rcd =>
             {
-                //TODO: Upsert node information
+                ReceiverRecord target =
+                    this.ReceiverTable.Receivers.FirstOrDefault(o => o.ReceiverNodeId == rcd.ReceiverNodeId);
+
+                target.ReceiverId = rcd.ReceiverId;
             });
         }
 

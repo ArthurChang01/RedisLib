@@ -22,6 +22,8 @@ namespace RedisLib.Receiver.ReceiverStates.States.Base
 
         protected int NodeId { get { return this._ctx.NodeId; } set { this._ctx.NodeId = value; } }
 
+        protected string Key { get { return this._ctx.Key; } set { this._ctx.Key = value; } }
+
         protected List<T> DataObjs { get { return this._ctx.DataObjs; } set { this._ctx.DataObjs = value; } }
 
         protected Queue<enLogType> ExecutedRecords => this._ctx.ExecutedRecords;

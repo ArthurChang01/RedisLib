@@ -75,15 +75,15 @@ namespace RedisLib.UT.Sender
                                         actual = null;
 
             _ctx.DataConnection.KeyExist(KeyName.ReceiverRegistry).Returns<bool>(true);
-            _ctx.DataConnection.GetHashTable<IDictionary<string, int>>(KeyName.ReceiverRegistry)
-                .Returns<IDictionary<string, IDictionary<string, int>>>(new Dictionary<string, IDictionary<string, int>> {
-                    { KeyName.ReceiverRegistry, new Dictionary<string, int> { { receiverId, 0 } }}
+            _ctx.DataConnection.GetHashTable<int>(KeyName.ReceiverRegistry)
+                .Returns<IDictionary<string, int>>(new Dictionary<string, int> {
+                    { receiverId, 0}
                 });
 
             _ctx.DataConnection.KeyExist(KeyName.ReceiverReply).Returns<bool>(true);
-            _ctx.DataConnection.GetHashTable<IDictionary<string, int>>(KeyName.ReceiverReply)
-                .Returns<IDictionary<string, IDictionary<string, int>>>(new Dictionary<string, IDictionary<string, int>> {
-                    { KeyName.ReceiverReply, new Dictionary<string,int>{ { "0", 0} } }
+            _ctx.DataConnection.GetHashTable<int>(KeyName.ReceiverReply)
+                .Returns<IDictionary<string, int>>(new Dictionary<string, int> {
+                    { "0",0 }
                 });
 
             //Act
@@ -103,9 +103,9 @@ namespace RedisLib.UT.Sender
                                         actual = null;
 
             _ctx.DataConnection.KeyExist(KeyName.ReceiverRegistry).Returns<bool>(true);
-            _ctx.DataConnection.GetHashTable<IDictionary<string, int>>(KeyName.ReceiverRegistry)
-                .Returns<IDictionary<string, IDictionary<string, int>>>(new Dictionary<string, IDictionary<string, int>> {
-                    { KeyName.ReceiverRegistry, new Dictionary<string, int> { { receiverId, 0 } }}
+            _ctx.DataConnection.GetHashTable<int>(KeyName.ReceiverRegistry)
+                .Returns<IDictionary<string, int>>(new Dictionary<string, int> {
+                    {  receiverId, 0 }
                 });
 
             _ctx.DataConnection.KeyExist(KeyName.ReceiverReply).Returns<bool>(false);
@@ -129,6 +129,7 @@ namespace RedisLib.UT.Sender
             object dataValue = new object();
 
             //Act
+            this._ctx.Initial();
             this._ctx.Send(enLogType.BO, dataValue);
             ISenderState currentState = this._ctx.CurrentState;
             actual = currentState.StateName;
@@ -160,6 +161,7 @@ namespace RedisLib.UT.Sender
                       actual = string.Empty;
 
             //Act
+            this._ctx.Initial();
             this._ctx.Send(enLogType.BO, new object());
             actual = this._ctx.DataKey.Split(':')[0];
 
@@ -190,7 +192,7 @@ namespace RedisLib.UT.Sender
 
         #region ProcessState
         [Test]
-        public void Should_SaveMustBeExecuted_And_SetHashTablePlusMustBeExecuted_And_PublishMessageMustBeExecuted_When_ThereIsOneReceiver()
+        public void Should_SaveMustBeExecuted_And_SetHashTablePlusMustBeExecuted_When_ThereIsOneReceiver()
         {
             //Arrange
             object dataValue = new object();
@@ -204,7 +206,7 @@ namespace RedisLib.UT.Sender
 
             //Assert
             this._ctx.DataConnection.Received().Save(Arg.Is<string>(x => x.Split(':')[0].Equals("{BO/0}")), dataValue);
-            this._ctx.DataConnection.Received().SetHashTable_Plus(KeyName.ReceiverReply, receiverId, 1);
+            this._ctx.DataConnection.Received().SetHashTable_Plus(KeyName.ReceiverReply, "0", 1);
         }
 
         [Test]
@@ -217,11 +219,12 @@ namespace RedisLib.UT.Sender
             this._ctx.ReceiverTable.CandidateInfo = new Dictionary<enLogType, int> { { enLogType.API, -1 }, { enLogType.BO, 0 }, { enLogType.System, -1 } };
 
             //Act
+            this._ctx.Initial();
             this._ctx.Send(enLogType.BO, dataValue);
 
             //Assert
             this._ctx.DataConnection.Received().Save(Arg.Is<string>(x => x.Split(':')[0].Equals("{BO/0}")), dataValue);
-            this._ctx.DataConnection.Received().SetHashTable_Plus(KeyName.ReceiverReply, string.Empty, 1);
+            this._ctx.DataConnection.Received().SetHashTable_Plus(KeyName.ReceiverReply, "0", 1);
             this._ctx.DataConnection.DidNotReceive().PublishMessage(Arg.Any<string>(), Arg.Any<string>());
         }
         #endregion

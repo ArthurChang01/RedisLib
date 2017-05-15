@@ -69,6 +69,7 @@ namespace RedisLib.UT.Receiver
             this._ctx.DataConnection.Fetch<object>(Arg.Any<string>()).Returns<object>(null);
 
             //Act
+            this._ctx.Initial();
             this._ctx.Run();
             actual = this._ctx.NodeId;
 

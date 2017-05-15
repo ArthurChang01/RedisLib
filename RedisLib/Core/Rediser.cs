@@ -23,7 +23,7 @@ namespace RedisLib.Core
         #endregion
 
         #region Constructor
-        public Rediser(string conString) : this(conString, SerializerType.Json) { }
+        public Rediser(string conString) : this(conString, SerializerType.JillJson) { }
 
         public Rediser(string conString, SerializerType serializerType)
         {
@@ -187,7 +187,6 @@ namespace RedisLib.Core
             {
                 IEnumerable<string> ieKeys = this._client.SearchKeys(keyPattern);
                 result = this._client.GetAll<T>(ieKeys).Values;
-                this._client.RemoveAll(ieKeys);
             }
             catch (Exception ex)
             {
@@ -235,6 +234,53 @@ namespace RedisLib.Core
         }
         #endregion
 
+        #region Remove
+        public void RemoveAll(string keyPattern)
+        {
+            try
+            {
+                IEnumerable<string> ieKeys = this._client.SearchKeys(keyPattern);
+                this._client.RemoveAll(ieKeys);
+            }
+            catch (Exception ex)
+            {
+                throw new RemoveAllException(ex);
+            }
+        }
+
+        public async Task RemoveAllAsync(string keyPattern)
+        {
+            try
+            {
+                IEnumerable<string> ieKeys = await this._client.SearchKeysAsync(keyPattern);
+                await this._client.RemoveAsync(keyPattern);
+            }
+            catch (Exception ex)
+            {
+                throw new RemoveAllException(ex);
+            }
+        }
+
+        public async Task RemoveAllAsyncWithTran(string keyPattern, ITransaction tran)
+        {
+            if (tran == null)
+                throw new ArgumentException("need ITransaction instance");
+
+            try
+            {
+                IEnumerable<string> ieKeys = await this._client.SearchKeysAsync(keyPattern);
+
+                foreach (string key in ieKeys)
+                    await tran.KeyDeleteAsync(key, CommandFlags.FireAndForget);
+            }
+            catch (Exception ex)
+            {
+                throw new RemoveAllException(ex);
+            }
+        }
+
+        #endregion
+
         #region Key exist operation
         public bool KeyExist(string key)
         {
@@ -242,8 +288,7 @@ namespace RedisLib.Core
 
             try
             {
-                IEnumerable<string> ieKeys = this._client.SearchKeys(key);
-                blExisit = ieKeys != null && ieKeys.LongCount() > 0;
+                blExisit = this._client.Database.KeyExists(key);
             }
             catch (Exception ex)
             {

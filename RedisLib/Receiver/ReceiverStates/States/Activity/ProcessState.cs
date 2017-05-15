@@ -23,9 +23,10 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
         public override void Execute()
         {
             //do something
+            this.DataConnection.RemoveAll(this.Key);
 
             //step final. clean
-            this.DataConnection.SetHashTable_Plus(KeyName.ReceiverReply, this.ID, -1);
+            this.DataConnection.SetHashTable_Plus(KeyName.ReceiverReply, this.NodeId.ToString(), -1);
             this.DataObjs.Clear();
         }
 

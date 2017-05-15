@@ -30,7 +30,7 @@ namespace RedisLib.Sender.SenderStates.States.Activity
 
             //step1. Save data
             this.DataConnection.Save<T>(this.DataKey, this.DataValue);
-            this.DataConnection.SetHashTable_Plus(KeyName.ReceiverReply, receiverId);
+            this.DataConnection.SetHashTable_Plus(KeyName.ReceiverReply, target.ReceiverNodeId.ToString());
         }
 
         [ExcludeFromCodeCoverage]

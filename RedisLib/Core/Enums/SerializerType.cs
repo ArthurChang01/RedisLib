@@ -2,7 +2,8 @@
 {
     public enum SerializerType
     {
-        Json,
+        NewtonJson,
+        JillJson,
         ProtoBuf
     }
 }

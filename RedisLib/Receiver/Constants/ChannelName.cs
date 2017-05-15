@@ -7,5 +7,6 @@ namespace RedisLib.Receiver.Constants
     {
         public static string ReceiveReply = "ReceiveReply_{0}";
         public static string Sync_Message = "Sync_Message";
+        public static string ReceiverRegistry = "ReceiverRegistry";
     }
 }

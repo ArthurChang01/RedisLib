@@ -65,11 +65,11 @@ namespace RedisLib.IT.InitialTiming.Specs
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("A eceiver initiate before a sender")]
+        [NUnit.Framework.DescriptionAttribute("A receiver initiate before a sender")]
         [NUnit.Framework.CategoryAttribute("SenderLaterReceiverFirst")]
-        public virtual void AEceiverInitiateBeforeASender()
+        public virtual void AReceiverInitiateBeforeASender()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("A eceiver initiate before a sender", new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("A receiver initiate before a sender", new string[] {
                         "SenderLaterReceiverFirst"});
 #line 7
 this.ScenarioSetup(scenarioInfo);

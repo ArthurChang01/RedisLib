@@ -54,6 +54,9 @@
     <Reference Include="StackExchange.Redis.Extensions.Jil, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StackExchange.Redis.Extensions.Jil.2.1.0\lib\net45\StackExchange.Redis.Extensions.Jil.dll</HintPath>
     </Reference>
+    <Reference Include="StackExchange.Redis.Extensions.Newtonsoft, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\StackExchange.Redis.Extensions.Newtonsoft.2.1.0\lib\net45\StackExchange.Redis.Extensions.Newtonsoft.dll</HintPath>
+    </Reference>
     <Reference Include="StackExchange.Redis.Extensions.Protobuf, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\StackExchange.Redis.Extensions.Protobuf.2.1.0\lib\net45\StackExchange.Redis.Extensions.Protobuf.dll</HintPath>
     </Reference>
@@ -78,6 +81,7 @@
     <Compile Include="Core\Exceptions\GetHashTableException.cs" />
     <Compile Include="Core\Exceptions\KeyExistException.cs" />
     <Compile Include="Core\Exceptions\ReceiveException.cs" />
+    <Compile Include="Core\Exceptions\RemoveAllException.cs" />
     <Compile Include="Core\Exceptions\SaveException.cs" />
     <Compile Include="Core\Exceptions\PublishException.cs" />
     <Compile Include="Core\Exceptions\SetHashTableException.cs" />
@@ -92,6 +96,7 @@
     <Compile Include="Receiver\Constants\KeyName.cs" />
     <Compile Include="Receiver\Context\ReceiverContext.cs" />
     <Compile Include="Receiver\Models\enLogType.cs" />
+    <Compile Include="Receiver\Models\ReceiverRecord.cs" />
     <Compile Include="Receiver\ReceiverStates\Interfaces\IReceiverState.cs" />
     <Compile Include="Receiver\ReceiverStates\States\Activity\InitialState.cs" />
     <Compile Include="Receiver\ReceiverStates\States\Activity\PrepareState.cs" />

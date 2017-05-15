@@ -1,8 +1,8 @@
-﻿using StackExchange.Redis;
-using StackExchange.Redis.Extensions.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using StackExchange.Redis;
+using StackExchange.Redis.Extensions.Core;
 
 namespace RedisLib.Core
 {
@@ -29,6 +29,9 @@ namespace RedisLib.Core
         Task<bool> KeyExistAsyncWithTran(string key, ITransaction tran);
         void PublishMessage<T>(string channelName, T message);
         Task PublishMessageAsync<T>(string channelName, T message);
+        void RemoveAll(string keyPattern);
+        Task RemoveAllAsync(string keyPattern);
+        Task RemoveAllAsyncWithTran(string keyPattern, ITransaction tran);
         void Save<T>(string key, T value, TimeSpan? expiredTime = default(TimeSpan?));
         Task SaveAsync<T>(string key, T value, TimeSpan? expiredTime = default(TimeSpan?));
         Task SaveAsyncWithTran<T>(string key, T value, ITransaction tran, TimeSpan? expiredTime = default(TimeSpan?));

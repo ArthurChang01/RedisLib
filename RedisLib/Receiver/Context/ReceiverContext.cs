@@ -36,6 +36,8 @@ namespace RedisLib.Receiver.Context
 
         public int NodeId { get; set; }
 
+        public string Key { get; set; }
+
         public IReceiverState CurrentState => this._currentState;
 
         public IReceiverState ReceiverState { get; set; }
@@ -51,11 +53,14 @@ namespace RedisLib.Receiver.Context
         public IRediser DataConnection { get { return _dataConnection; } set { _dataConnection = value; } }
         #endregion
 
-        public void Run()
+        public void Initial()
         {
             this._currentState = LogStateTable["InitialState"];
             this._currentState.Execute();
+        }
 
+        public void Run()
+        {
             this._currentState = LogStateTable["PrepareState"];
             this._currentState.Execute();
 

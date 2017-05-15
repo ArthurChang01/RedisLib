@@ -2,7 +2,6 @@
 using RedisLib.Sender.Context;
 using RedisLib.Sender.Models;
 using RedisLib.Sender.SenderStates.Interfaces;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace RedisLib.Sender.SenderStates.States.Base

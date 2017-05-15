@@ -1,5 +1,6 @@
 ﻿using RedisLib.Receiver.Constants;
 using RedisLib.Receiver.Context;
+using RedisLib.Receiver.Models;
 using RedisLib.Receiver.ReceiverStates.States.Base;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
 
             IEnumerable<int> availabler = this.DataConnection.GetHashTable<int>(KeyName.ReceiverReply).Where(o => o.Value <= 20).Select(o => int.Parse(o.Key));
 
-            IEnumerable<int> ieComparer = Enumerable.Range(0, availabler.Max() + 1); //0~(max+1)
+            IEnumerable<int> ieComparer = Enumerable.Range(0, availabler.Count() + 1); //0~(max+1)
             candidateId = ieComparer.Except<int>(availabler).First(); //pick up lake slot
 
             return candidateId;
@@ -49,6 +50,11 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
 
             //step3. register reply infor
             this.DataConnection.SetHashTable<int>(KeyName.ReceiverReply, this.NodeId.ToString(), 0);
+
+            //step4. publish receiver info
+            this.MsgConnection.PublishMessage<ReceiverRecord>(ChannelName.ReceiverRegistry,
+                new ReceiverRecord { ReceiverId = this.ID, ReceiverNodeId = this.NodeId }
+            );
         }
 
         [ExcludeFromCodeCoverage]

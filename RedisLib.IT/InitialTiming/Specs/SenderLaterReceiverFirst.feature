@@ -4,7 +4,7 @@
 	I want to make sure in different sender/receiver initiate timing everything is be alright
 
 @SenderLaterReceiverFirst
-Scenario: A eceiver initiate before a sender
+Scenario: A receiver initiate before a sender
 	Given A receiver has been initiated
 	And A receiver is waiting for trigger
 	When I initiate a sender
