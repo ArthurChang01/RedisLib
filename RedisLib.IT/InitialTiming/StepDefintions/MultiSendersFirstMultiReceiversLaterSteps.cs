@@ -35,7 +35,7 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
         {
             await this._checker.RemoveAllAsync("ReceiverRegistry");
             await this._checker.RemoveAllAsync("ReceiverReply");
-            await this._checker.RemoveAllAsync("{API/0}");
+            await this._checker.RemoveAllAsync("{API/0}:*");
         }
 
         [Given(@"Multi-sender have been initiated")]

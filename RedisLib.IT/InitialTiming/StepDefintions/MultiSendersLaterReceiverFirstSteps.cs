@@ -1,4 +1,12 @@
-﻿using TechTalk.SpecFlow;
+﻿using RedisLib.Core;
+using RedisLib.Core.Enums;
+using RedisLib.Receiver.Context;
+using RedisLib.Sender.Context;
+using RedisLib.Sender.Models;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Threading.Tasks;
+using TechTalk.SpecFlow;
 
 namespace RedisLib.IT.InitialTiming.StepDefintions
 {
@@ -6,34 +14,73 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
     [Scope(Feature = "MultiSendersLaterReceiverFirst")]
     public class MultiSendersLaterReceiverFirstSteps
     {
-        [Given(@"A receiver has been initiated")]
-        public void GivenAReceiverHasBeenInitiated()
+        private List<SenderContext<object>> _senders;
+        private ReceiverContext<object> _receiver;
+        private string _conString = ConfigurationManager.ConnectionStrings["redis"].ConnectionString;
+        private IRediser _checker = null;
+
+        [BeforeScenario]
+        public void ScenarioSetup()
         {
-            ScenarioContext.Current.Pending();
+            this._senders = new List<SenderContext<object>>();
+            this._receiver = new ReceiverContext<object>();
+
+            this._checker = new Rediser(_conString);
+        }
+
+        [AfterScenario]
+        public async Task ScenarioTeardown()
+        {
+            await this._checker.RemoveAllAsync("ReceiverRegistry");
+            await this._checker.RemoveAllAsync("ReceiverReply");
+            await this._checker.RemoveAllAsync("{API/0}:*");
+        }
+
+        [Given(@"A receiver has been initiated")]
+        public void AReceiverHasBeenInitiated()
+        {
+            this._receiver = new ReceiverContext<object>();
+            this._receiver.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            this._receiver.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+
+            this._receiver.Initial();
         }
 
         [Given(@"This receiver is waiting for trigger")]
-        public void GivenThisReceiverIsWaitingForTrigger()
+        public void ThisReceiverIsWaitingForTrigger()
         {
-            ScenarioContext.Current.Pending();
+            //ScenarioContext.Current.Pending();
         }
 
-        [When(@"I initiate multi-sender")]
-        public void WhenIInitiateMulti_Sender()
+        [When(@"Initiate multi-sender")]
+        public void InitiateMulti_Sender()
         {
-            ScenarioContext.Current.Pending();
+            SenderContext<object> senderA = new SenderContext<object>(),
+                                                    senderB = new SenderContext<object>();
+            senderA.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            senderA.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+
+            senderB.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            senderB.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+
+            senderA.Initial();
+            senderB.Initial();
+
+            this._senders.Add(senderA);
+            this._senders.Add(senderB);
         }
 
         [Then(@"Multi-sender can save data into redis")]
-        public void ThenMulti_SenderCanSaveDataIntoRedis()
+        public void Multi_SenderCanSaveDataIntoRedis()
         {
-            ScenarioContext.Current.Pending();
+            object transferObj = new object();
+            this._senders.ForEach(o => o.Send(enLogType.API, transferObj));
         }
 
         [Then(@"A receiver can fetch data which are saved by senders")]
-        public void ThenAReceiverCanFetchDataWhichAreSavedBySenders()
+        public void AReceiverCanFetchDataWhichAreSavedBySenders()
         {
-            ScenarioContext.Current.Pending();
+            _receiver.Run();
         }
     }
 }

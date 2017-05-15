@@ -7,6 +7,6 @@
 Scenario: A sender initiate before a receiver
 	Given A sender has been initiated
 	And This sender is going to send data
-	When I initiate a receiver
+	When Initiate a receiver
 	Then A sender can save data into redis
 	Then A receiver can fetch data which are saved by sender

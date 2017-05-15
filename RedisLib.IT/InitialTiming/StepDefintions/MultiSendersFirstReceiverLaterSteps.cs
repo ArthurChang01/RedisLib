@@ -1,41 +1,88 @@
-﻿using TechTalk.SpecFlow;
+﻿using FluentAssertions;
+using RedisLib.Core;
+using RedisLib.Core.Enums;
+using RedisLib.Receiver.Context;
+using RedisLib.Sender.Context;
+using RedisLib.Sender.Models;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Threading.Tasks;
+using TechTalk.SpecFlow;
 
 namespace RedisLib.IT.InitialTiming.StepDefintions
 {
     [Binding]
     [Scope(Feature = "MultiSendersFirstReceiverLater")]
-    public sealed class MultiSendersFirstReceiverLaterSteps
+    public class MultiSendersFirstReceiverLaterSteps
     {
-        // For additional details on SpecFlow step definitions see http://go.specflow.org/doc-stepdef
+        private List<SenderContext<object>> _senders;
+        private ReceiverContext<object> _receivers;
+        private string _conString = ConfigurationManager.ConnectionStrings["redis"].ConnectionString;
+        private IRediser _checker = null;
 
-        [Given("A multi-sender has been initiated")]
-        public void AMultiSenderHasBeenInitialed()
+        [BeforeScenario]
+        public void ScenarioSetup()
         {
-            ScenarioContext.Current.Pending();
+            this._senders = new List<SenderContext<object>>();
+            this._receivers = new ReceiverContext<object>();
+
+            this._checker = new Rediser(_conString);
         }
 
-        [Given("this multi-sender are going to send data")]
+        [AfterScenario]
+        public async Task ScenarioTeardown()
+        {
+            await this._checker.RemoveAllAsync("ReceiverRegistry");
+            await this._checker.RemoveAllAsync("ReceiverReply");
+            await this._checker.RemoveAllAsync("{API/0}:*");
+        }
+
+        [Given("Multi-sender has been initiated")]
+        public void MultiSenderHasBeenInitialed()
+        {
+            SenderContext<object> senderA = new SenderContext<object>(),
+                                                    senderB = new SenderContext<object>();
+            senderA.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            senderA.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+
+            senderB.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            senderB.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+
+            senderA.Initial();
+            senderB.Initial();
+
+            this._senders.Add(senderA);
+            this._senders.Add(senderB);
+        }
+
+        [Given("This multi-sender are going to send data")]
         public void ThisMultiSenderAreGoingToSendData()
         {
-            ScenarioContext.Current.Pending();
+            object transferObj = new object();
+            this._senders.ForEach(o => o.Send(enLogType.API, transferObj));
         }
 
-        [When("I initiate a receiver")]
-        public void IInitiateAReceiver()
+        [When("Initiate a receiver")]
+        public void InitiateAReceiver()
         {
-            ScenarioContext.Current.Pending();
+            this._receivers.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            this._receivers.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+
+            this._receivers.Initial();
         }
 
         [Then("Multi-sender can save data into redis")]
         public void MultiSenderCanSaveDataIntoRedis()
         {
-            ScenarioContext.Current.Pending();
+            IEnumerable<object> result = this._checker.Fetch<object>("{API/0}:*");
+
+            result.Should().NotBeNull().And.NotBeEmpty();
         }
 
         [Then("A receiver can fetch data which are saved by senders")]
         public void AReceiverCanFetchDataWhichAreSavedBySenders()
         {
-            ScenarioContext.Current.Pending();
+            this._receivers.Run();
         }
     }
 }

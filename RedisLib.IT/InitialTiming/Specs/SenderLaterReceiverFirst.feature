@@ -6,7 +6,6 @@
 @SenderLaterReceiverFirst
 Scenario: A receiver initiate before a sender
 	Given A receiver has been initiated
-	And A receiver is waiting for trigger
-	When I initiate a sender
+	When Initiate a sender
 	Then A sender can save data into redis
 	Then A receiver can fetch data which is saved by sender

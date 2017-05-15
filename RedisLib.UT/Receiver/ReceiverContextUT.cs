@@ -42,6 +42,7 @@ namespace RedisLib.UT.Receiver
             this._ctx.DataConnection.Fetch<object>(Arg.Any<string>()).Returns<object>(null);
 
             //Act
+            this._ctx.Initial();
             this._ctx.Run();
             actual = this._ctx.NodeId;
 
@@ -55,7 +56,7 @@ namespace RedisLib.UT.Receiver
         {
             //Arrange
             int expect = 1, actual = -1;
-            IDictionary<string, int> receivers = 
+            IDictionary<string, int> receivers =
                 new Dictionary<string, int> {
                     { Guid.NewGuid().ToString(), 0}, { Guid.NewGuid().ToString(), 1}, { Guid.NewGuid().ToString(), 2}
                 };
@@ -79,12 +80,14 @@ namespace RedisLib.UT.Receiver
         }
 
         [Test]
-        public void Should_TopElementMustBeAPI_When_ExecuteRecordsIsEmpty() {
+        public void Should_TopElementMustBeAPI_When_ExecuteRecordsIsEmpty()
+        {
             //Arrange
             enLogType expect = enLogType.API, actual;
             this._ctx.DataConnection.Fetch<object>(Arg.Any<string>()).Returns<object>(null);
 
             //Act
+            this._ctx.Initial();
             this._ctx.Run();
             actual = this._ctx.ExecutedRecords.Dequeue();
 
@@ -93,7 +96,8 @@ namespace RedisLib.UT.Receiver
         }
 
         [Test]
-        public void Should_TopElementMustBeBO_When_AddNewOne_And_ThereAreAPIAndBOInExecutedRecords() {
+        public void Should_TopElementMustBeBO_When_AddNewOne_And_ThereAreAPIAndBOInExecutedRecords()
+        {
             //Arrange
             enLogType expect = enLogType.BO, actual;
             this._ctx.ExecutedRecords.Enqueue(enLogType.API);
@@ -101,6 +105,7 @@ namespace RedisLib.UT.Receiver
             this._ctx.DataConnection.Fetch<object>(Arg.Any<string>()).Returns<object>(null);
 
             //Act
+            this._ctx.Initial();
             this._ctx.Run();
             actual = this._ctx.ExecutedRecords.Dequeue();
 
@@ -109,12 +114,14 @@ namespace RedisLib.UT.Receiver
         }
 
         [Test]
-        public void Should_KeyPatternMustBeStartedWithAPI0_When_ThereIsNoExecutedRecords_And_NodeIdIs0() {
+        public void Should_KeyPatternMustBeStartedWithAPI0_When_ThereIsNoExecutedRecords_And_NodeIdIs0()
+        {
             //Arrange
             string expect = "{API/0}";
             this._ctx.DataConnection.Fetch<object>(Arg.Any<string>()).Returns<object>(null);
 
             //Act
+            this._ctx.Initial();
             this._ctx.Run();
 
             //Assert
@@ -122,7 +129,8 @@ namespace RedisLib.UT.Receiver
         }
 
         [Test]
-        public void Should_ThereAreSomethingInDataObjs_When_FetchSomething() {
+        public void Should_ThereAreSomethingInDataObjs_When_FetchSomething()
+        {
             //Arrange
             object something = new object();
             List<object> expect = new List<object> { something },
@@ -130,6 +138,7 @@ namespace RedisLib.UT.Receiver
             this._ctx.DataConnection.Fetch<object>(Arg.Any<string>()).Returns<object>(expect);
 
             //Act
+            this._ctx.Initial();
             this._ctx.Run();
             actual = this._ctx.DataObjs;
 

@@ -7,7 +7,7 @@
 Scenario: A sender initiate before multi-receiver
 	Given A sender has been initiated
 	And This sender is going to send data
-	When I initiate multi-receiver
+	When Initiate multi-receiver
 	Then A sender can save data into redis
 	Then Multi-receiver can fetch data which are saved by sender
-	Then Every receiver get different node id 
+	Then Every receiver gets different node id 

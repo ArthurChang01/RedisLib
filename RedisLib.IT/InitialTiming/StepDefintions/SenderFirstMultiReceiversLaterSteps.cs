@@ -1,4 +1,14 @@
-﻿using TechTalk.SpecFlow;
+﻿using FluentAssertions;
+using RedisLib.Core;
+using RedisLib.Core.Enums;
+using RedisLib.Receiver.Context;
+using RedisLib.Sender.Constants;
+using RedisLib.Sender.Context;
+using RedisLib.Sender.Models;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Threading.Tasks;
+using TechTalk.SpecFlow;
 
 namespace RedisLib.IT.InitialTiming.StepDefintions
 {
@@ -6,40 +16,90 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
     [Scope(Feature = "SenderFirstMultiReceiversLater")]
     public class SenderFirstMultiReceiversLaterSteps
     {
-        [Given(@"A sender has been initiated")]
-        public void GivenASenderHasBeenInitiated()
+        private SenderContext<object> _senders;
+        private List<ReceiverContext<object>> _receivers;
+        private string _conString = ConfigurationManager.ConnectionStrings["redis"].ConnectionString;
+        private IRediser _checker = null;
+
+        [BeforeScenario]
+        public void ScenarioSetup()
         {
-            ScenarioContext.Current.Pending();
+            this._senders = new SenderContext<object>();
+            this._receivers = new List<ReceiverContext<object>>();
+
+            this._checker = new Rediser(_conString);
+        }
+
+        [AfterScenario]
+        public async Task ScenarioTeardown()
+        {
+            await this._checker.RemoveAllAsync("ReceiverRegistry");
+            await this._checker.RemoveAllAsync("ReceiverReply");
+            await this._checker.RemoveAllAsync("{API/0}:*");
+        }
+
+        [Given(@"A sender has been initiated")]
+        public void ASenderHasBeenInitiated()
+        {
+            this._senders.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            this._senders.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+
+            this._senders.Initial();
         }
 
         [Given(@"This sender is going to send data")]
-        public void GivenThisSenderIsGoingToSendData()
+        public void ThisSenderIsGoingToSendData()
         {
-            ScenarioContext.Current.Pending();
+            object transferObj = new object();
+            this._senders.Send(enLogType.API, transferObj);
         }
 
-        [When(@"I initiate multi-receiver")]
-        public void WhenIInitiateMulti_Receiver()
+        [When(@"Initiate multi-receiver")]
+        public void InitiateMulti_Receiver()
         {
-            ScenarioContext.Current.Pending();
+            ReceiverContext<object> receiverA = new ReceiverContext<object>(),
+                                                        receiverB = new ReceiverContext<object>();
+            receiverA.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            receiverA.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+
+            receiverB.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            receiverB.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+
+            receiverA.Initial();
+            receiverB.Initial();
+
+            this._receivers.Add(receiverA);
+            this._receivers.Add(receiverB);
         }
 
         [Then(@"A sender can save data into redis")]
-        public void ThenASenderCanSaveDataIntoRedis()
+        public void ASenderCanSaveDataIntoRedis()
         {
-            ScenarioContext.Current.Pending();
+            IEnumerable<object> result = this._checker.Fetch<object>("{API/0}:*");
+
+            result.Should().NotBeNull().And.NotBeEmpty();
         }
 
         [Then(@"Multi-receiver can fetch data which are saved by sender")]
-        public void ThenMulti_ReceiverCanFetchDataWhichAreSavedBySender()
+        public void Multi_ReceiverCanFetchDataWhichAreSavedBySender()
         {
-            ScenarioContext.Current.Pending();
+            _receivers.ForEach(o => o.Run());
         }
 
-        [Then(@"Every receiver get different node id")]
-        public void ThenEveryReceiverGetDifferentNodeId()
+        [Then(@"Every receiver gets different node id")]
+        public void EveryReceiverGetsDifferentNodeId()
         {
-            ScenarioContext.Current.Pending();
+            IEnumerable<string> receiverNodeId = this._checker.GetHashTable<int>(KeyName.ReceiverRegistry).Keys;
+            bool isDiff = true;
+
+            string temp = string.Empty;
+            foreach (string id in receiverNodeId)
+            {
+                isDiff = !temp.Equals(id);
+                temp = id;
+            }
+
+            isDiff.Should().Be(true);
         }
     }
 }
