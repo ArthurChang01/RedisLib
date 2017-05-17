@@ -7,6 +7,11 @@ namespace RedisLib.Sender.Models
     [ExcludeFromCodeCoverage]
     public class ReceiverTable
     {
+        public ReceiverTable()
+        {
+            this.Receivers = new List<ReceiverRecord>();
+        }
+
         public IList<ReceiverRecord> Receivers { get; set; }
 
         public IDictionary<enLogType, int> CandidateInfo { get; set; }
