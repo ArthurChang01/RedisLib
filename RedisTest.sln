@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Practice", "Practice", "{A2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SenderForm", "SenderForm\SenderForm.csproj", "{CE8B4886-DE46-4E2E-A145-612EE215AF14}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReceiverForm", "ReceiverForm\ReceiverForm.csproj", "{9DBA891B-D717-48D8-B621-9D0D22A44C19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{CE8B4886-DE46-4E2E-A145-612EE215AF14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE8B4886-DE46-4E2E-A145-612EE215AF14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE8B4886-DE46-4E2E-A145-612EE215AF14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DBA891B-D717-48D8-B621-9D0D22A44C19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DBA891B-D717-48D8-B621-9D0D22A44C19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DBA891B-D717-48D8-B621-9D0D22A44C19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DBA891B-D717-48D8-B621-9D0D22A44C19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,5 +54,6 @@ Global
 		{8EDF4429-251A-416D-BB68-93F227191BCF} = {7174066C-9FD4-49A2-A3AF-2FA7ECD5B569}
 		{B325BAA0-252B-497C-A14B-595629DC00F1} = {7174066C-9FD4-49A2-A3AF-2FA7ECD5B569}
 		{CE8B4886-DE46-4E2E-A145-612EE215AF14} = {A21CFE4E-0CD5-4FAC-BCE3-CB23711DB86F}
+		{9DBA891B-D717-48D8-B621-9D0D22A44C19} = {A21CFE4E-0CD5-4FAC-BCE3-CB23711DB86F}
 	EndGlobalSection
 EndGlobal

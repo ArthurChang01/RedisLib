@@ -32,7 +32,7 @@ namespace RedisLib.Receiver.ReceiverStates.States.Activity
             //step1. pick-up log type
             IEnumerable<enLogType> executed = this.ExecutedRecords.ToArray();
             enLogType candidate = _logTypes.Except(executed).First();
-            if (executed.Count() > 0)
+            if (executed.Count() > 1)
                 this.ExecutedRecords.Dequeue(); //Pop-up oldest 
             this.ExecutedRecords.Enqueue(candidate); //Push-In newest
 

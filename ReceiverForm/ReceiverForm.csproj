@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CE8B4886-DE46-4E2E-A145-612EE215AF14}</ProjectGuid>
+    <ProjectGuid>{9DBA891B-D717-48D8-B621-9D0D22A44C19}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>SenderForm</RootNamespace>
-    <AssemblyName>SenderForm</AssemblyName>
+    <RootNamespace>ReceiverForm</RootNamespace>
+    <AssemblyName>ReceiverForm</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -46,17 +46,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="frmSender.cs">
+    <Compile Include="frmReceiver.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmSender.Designer.cs">
-      <DependentUpon>frmSender.cs</DependentUpon>
+    <Compile Include="frmReceiver.Designer.cs">
+      <DependentUpon>frmReceiver.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\SenderItem.cs" />
+    <Compile Include="Models\ReceiverItem.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="frmSender.resx">
-      <DependentUpon>frmSender.cs</DependentUpon>
+    <EmbeddedResource Include="frmReceiver.resx">
+      <DependentUpon>frmReceiver.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -67,9 +67,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <None Include="Properties\DataSources\frmSender.datasource" />
-    <None Include="Properties\DataSources\SenderForm.Models.SenderItem.datasource" />
-    <None Include="Properties\DataSources\SenderForm.Models.SenderList.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -85,7 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RedisLib\RedisLib.csproj">
-      <Project>{1165d6ca-cebd-437e-817f-6ff7f551c565}</Project>
+      <Project>{1165D6CA-CEBD-437E-817F-6FF7F551C565}</Project>
       <Name>RedisLib</Name>
     </ProjectReference>
   </ItemGroup>

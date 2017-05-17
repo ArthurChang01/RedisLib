@@ -93,6 +93,7 @@
             this.dgvSender.Dock = System.Windows.Forms.DockStyle.Top;
             this.dgvSender.Location = new System.Drawing.Point(4, 24);
             this.dgvSender.Margin = new System.Windows.Forms.Padding(4);
+            this.dgvSender.MultiSelect = false;
             this.dgvSender.Name = "dgvSender";
             this.dgvSender.ReadOnly = true;
             this.dgvSender.RowTemplate.Height = 24;

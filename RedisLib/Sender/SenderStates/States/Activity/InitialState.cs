@@ -83,7 +83,16 @@ namespace RedisLib.Sender.SenderStates.States.Activity
                 ReceiverRecord target =
                     this.ReceiverTable.Receivers.FirstOrDefault(o => o.ReceiverNodeId == rcd.ReceiverNodeId);
 
-                target.ReceiverId = rcd.ReceiverId;
+                if (target == null)
+                    this.ReceiverTable.Receivers.Add(
+                        new ReceiverRecord
+                        {
+                            ReceiverId = rcd.ReceiverId,
+                            ReceiverNodeId = rcd.ReceiverNodeId,
+                            UnReplyCounter = 0
+                        });
+                else
+                    target.ReceiverId = rcd.ReceiverId;
             });
         }
 
