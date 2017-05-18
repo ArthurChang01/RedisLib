@@ -58,6 +58,7 @@
       <HintPath>..\packages\StackExchange.Redis.Extensions.Protobuf.2.1.0\lib\net45\StackExchange.Redis.Extensions.Protobuf.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
@@ -73,19 +74,18 @@
     <Compile Include="Constant\ChannelName.cs" />
     <Compile Include="Constant\KeyName.cs" />
     <Compile Include="Model\enLogType.cs" />
-    <Compile Include="Model\Receiver\ReceiverRecord.cs" />
-    <Compile Include="Model\Sender\ReceiverRecord.cs" />
-    <Compile Include="Model\Sender\ReceiverTable.cs" />
+    <Compile Include="Model\ReceiverRecord.cs" />
+    <Compile Include="Model\ReceiverTable.cs" />
     <Compile Include="Receiver\ReceiverContext.cs" />
-    <Compile Include="Receiver\State\Activity\InitialState.cs" />
-    <Compile Include="Receiver\State\Activity\PrepareState.cs" />
-    <Compile Include="Receiver\State\Activity\ProcessState.cs" />
-    <Compile Include="Receiver\State\BaseState.cs" />
+    <Compile Include="Receiver\State\Activity\ReceiverInitialState.cs" />
+    <Compile Include="Receiver\State\Activity\ReceiverPrepareState.cs" />
+    <Compile Include="Receiver\State\Activity\ReceiverProcessState.cs" />
+    <Compile Include="Receiver\State\ReceiverBaseState.cs" />
     <Compile Include="Receiver\State\IReceiverState.cs" />
     <Compile Include="Sender\SenderContext.cs" />
-    <Compile Include="Sender\State\Activity\InitialState.cs" />
-    <Compile Include="Sender\State\Activity\PrepareState.cs" />
-    <Compile Include="Sender\State\Activity\ProcessState.cs" />
+    <Compile Include="Sender\State\Activity\SenderInitialState.cs" />
+    <Compile Include="Sender\State\Activity\SenderPrepareState.cs" />
+    <Compile Include="Sender\State\Activity\SenderProcessState.cs" />
     <Compile Include="Sender\State\BaseState.cs" />
     <Compile Include="Sender\State\ISenderState.cs" />
   </ItemGroup>
@@ -94,9 +94,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RedisLib\RedisLib.csproj">
+    <ProjectReference Include="..\RedisLib\CoreLib.csproj">
       <Project>{1165d6ca-cebd-437e-817f-6ff7f551c565}</Project>
-      <Name>RedisLib</Name>
+      <Name>CoreLib</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

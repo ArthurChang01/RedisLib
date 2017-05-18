@@ -1,7 +1,9 @@
-﻿using FluentAssertions;
+﻿using CoreLib.DB;
+using CoreLib.ES;
+using CoreLib.Redis;
+using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
-using RedisLib.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -10,7 +12,7 @@ using Transceiver.Model;
 using Transceiver.Receiver;
 using Transceiver.Receiver.State;
 
-namespace RedisLib.UT.Receiver
+namespace TransceiverLib.UT.Receiver
 {
     [ExcludeFromCodeCoverage]
     [TestFixture]
@@ -24,6 +26,8 @@ namespace RedisLib.UT.Receiver
             this._ctx = new ReceiverContext<object>();
             this._ctx.MsgConnection = Substitute.For<IRediser>();
             this._ctx.DataConnection = Substitute.For<IRediser>();
+            this._ctx.DB = Substitute.For<IDBer>();
+            this._ctx.ES = Substitute.For<IESer>();
         }
 
         [TearDown]
@@ -67,7 +71,7 @@ namespace RedisLib.UT.Receiver
 
             //Act
             this._ctx.Initial();
-            this._ctx.Run();
+            this._ctx.ReceiveMsg();
             IReceiverState currentState = this._ctx.CurrentState;
             actual = currentState.StateName;
 
@@ -87,7 +91,7 @@ namespace RedisLib.UT.Receiver
 
             //Act
             this._ctx.Initial();
-            this._ctx.Run();
+            this._ctx.ReceiveMsg();
             actual = this._ctx.NodeId;
 
             //Assert
@@ -115,7 +119,7 @@ namespace RedisLib.UT.Receiver
 
             //Act
             this._ctx.Initial();
-            this._ctx.Run();
+            this._ctx.ReceiveMsg();
             actual = this._ctx.NodeId;
 
             //Assert
@@ -134,7 +138,7 @@ namespace RedisLib.UT.Receiver
 
             //Act
             this._ctx.Initial();
-            this._ctx.Run();
+            this._ctx.ReceiveMsg();
             actual = this._ctx.ExecutedRecords.Dequeue();
 
             //Assert
@@ -152,7 +156,7 @@ namespace RedisLib.UT.Receiver
 
             //Act
             this._ctx.Initial();
-            this._ctx.Run();
+            this._ctx.ReceiveMsg();
             actual = this._ctx.ExecutedRecords.Dequeue();
 
             //Assert
@@ -170,7 +174,7 @@ namespace RedisLib.UT.Receiver
 
             //Act
             this._ctx.Initial();
-            this._ctx.Run();
+            this._ctx.ReceiveMsg();
 
             //Assert
             this._ctx.DataConnection.Received().Fetch<object>(Arg.Is<string>(x => x.Split(':')[0].Equals(expect)));
@@ -189,7 +193,7 @@ namespace RedisLib.UT.Receiver
 
             //Act
             this._ctx.Initial();
-            this._ctx.Run();
+            this._ctx.ReceiveMsg();
             actual = this._ctx.DataObjs;
 
             //Assert

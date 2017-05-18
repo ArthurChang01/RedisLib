@@ -1,5 +1,5 @@
-﻿using RedisLib.Core;
-using RedisLib.Core.Enums;
+﻿using CoreLib.Redis;
+using CoreLib.Redis.Enums;
 using System.Configuration;
 using Transceiver.Model;
 using Transceiver.Sender;

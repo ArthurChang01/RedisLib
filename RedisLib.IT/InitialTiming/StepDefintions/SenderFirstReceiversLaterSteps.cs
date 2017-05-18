@@ -1,6 +1,6 @@
-﻿using FluentAssertions;
-using RedisLib.Core;
-using RedisLib.Core.Enums;
+﻿using CoreLib.Redis;
+using CoreLib.Redis.Enums;
+using FluentAssertions;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
@@ -10,7 +10,7 @@ using Transceiver.Model;
 using Transceiver.Receiver;
 using Transceiver.Sender;
 
-namespace RedisLib.IT.InitialTiming.StepDefintions
+namespace TransceiverLib.IT.InitialTiming.StepDefintions
 {
     [ExcludeFromCodeCoverage]
     [Binding]
@@ -19,7 +19,9 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
     {
         private SenderContext<object> _sender;
         private ReceiverContext<object> _receiver;
-        private string _conString = ConfigurationManager.ConnectionStrings["redis"].ConnectionString;
+        private string _redisConString = ConfigurationManager.ConnectionStrings["redis"].ConnectionString;
+        private string _dbConString = ConfigurationManager.ConnectionStrings["db"].ConnectionString;
+        private string _esConString = ConfigurationManager.ConnectionStrings["es"].ConnectionString;
         private IRediser _checker = null;
 
         [BeforeScenario]
@@ -28,7 +30,7 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
             this._sender = new SenderContext<object>();
             this._receiver = new ReceiverContext<object>();
 
-            this._checker = new Rediser(_conString);
+            this._checker = new Rediser(_redisConString);
         }
 
         [AfterScenario]
@@ -42,8 +44,8 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
         [Given(@"A sender has been initiated")]
         public void ASenderHasBeenInitiated()
         {
-            this._sender.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
-            this._sender.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            this._sender.MsgConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
+            this._sender.DataConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
 
             this._sender.Initial();
         }
@@ -58,8 +60,8 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
         [When(@"Initiate a receiver")]
         public void InitiateAReceiver()
         {
-            this._receiver.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
-            this._receiver.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            this._receiver.MsgConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
+            this._receiver.DataConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
             this._receiver.Initial();
         }
 
@@ -74,7 +76,7 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
         [Then(@"A receiver can fetch data which are saved by sender")]
         public void AReceiverCanFetchDataWhichAreSavedBySender()
         {
-            this._receiver.Run();
+            this._receiver.ReceiveMsg();
         }
     }
 }

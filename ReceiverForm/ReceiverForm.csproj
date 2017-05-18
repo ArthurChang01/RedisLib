@@ -81,9 +81,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RedisLib\RedisLib.csproj">
+    <ProjectReference Include="..\RedisLib\CoreLib.csproj">
       <Project>{1165D6CA-CEBD-437E-817F-6FF7F551C565}</Project>
-      <Name>RedisLib</Name>
+      <Name>CoreLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\TransceiverLib\TransceiverLib.csproj">
       <Project>{fe647031-2714-4b45-a684-03fe2156d842}</Project>

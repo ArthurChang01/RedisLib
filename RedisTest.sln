@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedisLib", "RedisLib\RedisLib.csproj", "{1165D6CA-CEBD-437E-817F-6FF7F551C565}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreLib", "RedisLib\CoreLib.csproj", "{1165D6CA-CEBD-437E-817F-6FF7F551C565}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedisLib.UT", "RedisLib.UT\RedisLib.UT.csproj", "{8EDF4429-251A-416D-BB68-93F227191BCF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransceiverLib.UT", "RedisLib.UT\TransceiverLib.UT.csproj", "{8EDF4429-251A-416D-BB68-93F227191BCF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedisLib.IT", "RedisLib.IT\RedisLib.IT.csproj", "{B325BAA0-252B-497C-A14B-595629DC00F1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransceiverLib.IT", "RedisLib.IT\TransceiverLib.IT.csproj", "{B325BAA0-252B-497C-A14B-595629DC00F1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CoreLib", "CoreLib", "{9E17AD81-7847-4203-87D9-EA6085CB1947}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{9E17AD81-7847-4203-87D9-EA6085CB1947}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7174066C-9FD4-49A2-A3AF-2FA7ECD5B569}"
 EndProject

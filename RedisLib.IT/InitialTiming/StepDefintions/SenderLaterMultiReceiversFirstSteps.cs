@@ -1,6 +1,6 @@
-﻿using FluentAssertions;
-using RedisLib.Core;
-using RedisLib.Core.Enums;
+﻿using CoreLib.Redis;
+using CoreLib.Redis.Enums;
+using FluentAssertions;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
@@ -11,7 +11,7 @@ using Transceiver.Model;
 using Transceiver.Receiver;
 using Transceiver.Sender;
 
-namespace RedisLib.IT.InitialTiming.StepDefintions
+namespace TransceiverLib.IT.InitialTiming.StepDefintions
 {
     [ExcludeFromCodeCoverage]
     [Binding]
@@ -20,7 +20,9 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
     {
         private SenderContext<object> _senders;
         private List<ReceiverContext<object>> _receivers;
-        private string _conString = ConfigurationManager.ConnectionStrings["redis"].ConnectionString;
+        private string _redisConString = ConfigurationManager.ConnectionStrings["redis"].ConnectionString;
+        private string _dbConString = ConfigurationManager.ConnectionStrings["db"].ConnectionString;
+        private string _esConString = ConfigurationManager.ConnectionStrings["es"].ConnectionString;
         private IRediser _checker = null;
 
         [BeforeScenario]
@@ -29,7 +31,7 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
             this._senders = new SenderContext<object>();
             this._receivers = new List<ReceiverContext<object>>();
 
-            this._checker = new Rediser(_conString);
+            this._checker = new Rediser(_redisConString);
         }
 
         [AfterScenario]
@@ -45,11 +47,11 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
         {
             ReceiverContext<object> receiverA = new ReceiverContext<object>(),
                                                         receiverB = new ReceiverContext<object>();
-            receiverA.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
-            receiverA.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            receiverA.MsgConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
+            receiverA.DataConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
 
-            receiverB.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
-            receiverB.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            receiverB.MsgConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
+            receiverB.DataConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
 
             receiverA.Initial();
             receiverB.Initial();
@@ -61,8 +63,8 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
         [When(@"Initiate a sender")]
         public void InitiateASender()
         {
-            this._senders.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
-            this._senders.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            this._senders.MsgConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
+            this._senders.DataConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
 
             this._senders.Initial();
         }
@@ -77,7 +79,7 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
         [Then(@"First one receiver can fetch data which are saved by sender")]
         public void FirstOneReceiverCanFetchDataWhichAreSavedBySender()
         {
-            _receivers.ForEach(o => o.Run());
+            _receivers.ForEach(o => o.ReceiveMsg());
         }
 
         [Then(@"Every receiver get different node id")]

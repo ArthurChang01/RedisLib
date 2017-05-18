@@ -1,9 +1,8 @@
-﻿using RedisLib.Core;
+﻿using CoreLib.Redis;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Transceiver.Model;
-using Transceiver.Model.Sender;
 using Transceiver.Sender.State;
 using Transceiver.Sender.State.Activity;
 
@@ -28,9 +27,9 @@ namespace Transceiver.Sender
         public SenderContext()
         {
             this.disposedValue = true;
-            this._senderState.Add("InitialState", new InitialState<T>(this));
-            this._senderState.Add("PrepareState", new PrepareState<T>(this));
-            this._senderState.Add("ProcessState", new ProcessState<T>(this));
+            this._senderState.Add("InitialState", new SenderInitialState<T>(this));
+            this._senderState.Add("PrepareState", new SenderPrepareState<T>(this));
+            this._senderState.Add("ProcessState", new SenderProcessState<T>(this));
 
             this.ReceiverTable.CandidateInfo = new Dictionary<enLogType, int> {
                 { enLogType.API,-1}, { enLogType.BO,-1}, { enLogType.System,-1},

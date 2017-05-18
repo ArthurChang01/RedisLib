@@ -1,6 +1,8 @@
-﻿using FluentAssertions;
-using RedisLib.Core;
-using RedisLib.Core.Enums;
+﻿using CoreLib.DB;
+using CoreLib.ES;
+using CoreLib.Redis;
+using CoreLib.Redis.Enums;
+using FluentAssertions;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
@@ -11,7 +13,7 @@ using Transceiver.Model;
 using Transceiver.Receiver;
 using Transceiver.Sender;
 
-namespace RedisLib.IT.InitialTiming.StepDefintions
+namespace TransceiverLib.IT.InitialTiming.StepDefintions
 {
     [ExcludeFromCodeCoverage]
     [Binding]
@@ -20,7 +22,9 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
     {
         private List<SenderContext<object>> _senders;
         private List<ReceiverContext<object>> _receivers;
-        private string _conString = ConfigurationManager.ConnectionStrings["redis"].ConnectionString;
+        private string _redisConString = ConfigurationManager.ConnectionStrings["redis"].ConnectionString;
+        private string _dbConString = ConfigurationManager.ConnectionStrings["db"].ConnectionString;
+        private string _esConString = ConfigurationManager.ConnectionStrings["es"].ConnectionString;
         private IRediser _checker = null;
 
         [BeforeScenario]
@@ -29,7 +33,7 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
             this._senders = new List<SenderContext<object>>();
             this._receivers = new List<ReceiverContext<object>>();
 
-            this._checker = new Rediser(_conString);
+            this._checker = new Rediser(_redisConString);
         }
 
         [AfterScenario]
@@ -45,11 +49,11 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
         {
             SenderContext<object> senderA = new SenderContext<object>(),
                                                     senderB = new SenderContext<object>();
-            senderA.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
-            senderA.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            senderA.MsgConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
+            senderA.DataConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
 
-            senderB.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
-            senderB.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            senderB.MsgConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
+            senderB.DataConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
 
             senderA.Initial();
             senderB.Initial();
@@ -70,11 +74,15 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
         {
             ReceiverContext<object> receiverA = new ReceiverContext<object>(),
                                                         receiverB = new ReceiverContext<object>();
-            receiverA.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
-            receiverA.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            receiverA.MsgConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
+            receiverA.DataConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
+            receiverA.DB = new DBer(_dbConString);
+            receiverA.ES = new ESer(_esConString);
 
-            receiverB.MsgConnection = new Rediser(_conString, SerializerType.NewtonJson);
-            receiverB.DataConnection = new Rediser(_conString, SerializerType.NewtonJson);
+            receiverB.MsgConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
+            receiverB.DataConnection = new Rediser(_redisConString, SerializerType.NewtonJson);
+            receiverB.DB = new DBer(_dbConString);
+            receiverB.ES = new ESer(_esConString);
 
             receiverA.Initial();
             receiverB.Initial();
@@ -94,7 +102,7 @@ namespace RedisLib.IT.InitialTiming.StepDefintions
         [Then(@"Multi-receiver can fetch data which are saved by senders")]
         public void ThenMulti_ReceiverCanFetchDataWhichAreSavedBySenders()
         {
-            _receivers.ForEach(o => o.Run());
+            _receivers.ForEach(o => o.ReceiveMsg());
         }
 
         [Then(@"Every receiver get different node id")]

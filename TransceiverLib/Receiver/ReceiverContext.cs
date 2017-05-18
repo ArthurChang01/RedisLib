@@ -1,4 +1,6 @@
-﻿using RedisLib.Core;
+﻿using CoreLib.DB;
+using CoreLib.ES;
+using CoreLib.Redis;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -8,7 +10,7 @@ using Transceiver.Receiver.State.Activity;
 
 namespace Transceiver.Receiver
 {
-    public class ReceiverContext<T> : IDisposable
+    public class ReceiverContext<T> : IDisposable where T : class, new()
     {
         #region Member
         private bool disposedValue = false; // To detect redundant calls
@@ -20,14 +22,16 @@ namespace Transceiver.Receiver
 
         private static IRediser _msgConnection = null;
         private static IRediser _dataConnection = null;
+        private static IDBer _db = null;
+        private static IESer _es = null;
         #endregion
 
         #region Constructor
         public ReceiverContext()
         {
-            _receiverState.Add("InitialState", new InitialState<T>(this));
-            _receiverState.Add("PrepareState", new PrepareState<T>(this));
-            _receiverState.Add("ProcessState", new ProcessState<T>(this));
+            _receiverState.Add("InitialState", new ReceiverInitialState<T>(this));
+            _receiverState.Add("PrepareState", new ReceiverPrepareState<T>(this));
+            _receiverState.Add("ProcessState", new ReceiverProcessState<T>(this));
         }
         #endregion
 
@@ -49,6 +53,10 @@ namespace Transceiver.Receiver
         public IRediser MsgConnection { get { return _msgConnection; } set { _msgConnection = value; } }
 
         public IRediser DataConnection { get { return _dataConnection; } set { _dataConnection = value; } }
+
+        public IDBer DB { get { return _db; } set { _db = value; } }
+
+        public IESer ES { get { return _es; } set { _es = value; } }
         #endregion
 
         public void Initial()
@@ -57,7 +65,7 @@ namespace Transceiver.Receiver
             this._currentState.Execute();
         }
 
-        public void Run()
+        public void ReceiveMsg()
         {
             this._currentState = LogStateTable["PrepareState"];
             this._currentState.Execute();

@@ -1,18 +1,17 @@
-﻿using FluentAssertions;
+﻿using CoreLib.Redis;
+using FluentAssertions;
 using NSubstitute;
 using NUnit.Framework;
-using RedisLib.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Transceiver.Constant;
 using Transceiver.Model;
-using Transceiver.Model.Sender;
 using Transceiver.Sender;
 using Transceiver.Sender.State;
 
-namespace RedisLib.UT.Sender
+namespace TransceiverLib.UT.Sender
 {
     [ExcludeFromCodeCoverage]
     [TestFixture]

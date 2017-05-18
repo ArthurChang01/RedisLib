@@ -1,7 +1,6 @@
-﻿using RedisLib.Core;
+﻿using CoreLib.Redis;
 using System.Diagnostics.CodeAnalysis;
 using Transceiver.Model;
-using Transceiver.Model.Sender;
 
 namespace Transceiver.Sender.State
 {

@@ -1,5 +1,5 @@
-﻿using RedisLib.Core;
-using RedisLib.Core.Enums;
+﻿using CoreLib.Redis;
+using CoreLib.Redis.Enums;
 using System.Configuration;
 using Transceiver.Receiver;
 
@@ -57,7 +57,7 @@ namespace ReceiverForm.Models
 
         public void ReceiveMsg()
         {
-            this._receiver.Run();
+            this._receiver.ReceiveMsg();
         }
 
         #endregion
