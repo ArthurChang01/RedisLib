@@ -1,9 +1,9 @@
-﻿using RedisLib.Sender.Context;
-using RedisLib.Sender.Models;
-using SenderForm.Models;
+﻿using SenderForm.Models;
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Transceiver.Model;
+using Transceiver.Sender;
 
 namespace SenderForm
 {

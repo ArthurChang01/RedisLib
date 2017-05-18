@@ -1,7 +1,7 @@
 ﻿using RedisLib.Core;
 using RedisLib.Core.Enums;
-using RedisLib.Receiver.Context;
 using System.Configuration;
+using Transceiver.Receiver;
 
 namespace ReceiverForm.Models
 {
@@ -23,16 +23,22 @@ namespace ReceiverForm.Models
 
         public bool IsInitiate { get; set; }
 
-        public string CurrentState { get {
-                return this._receiver.CurrentState == null ? 
-                    string.Empty : 
+        public string CurrentState
+        {
+            get
+            {
+                return this._receiver.CurrentState == null ?
+                    string.Empty :
                     this._receiver.CurrentState.StateName;
             }
         }
 
-        public string DataKey { get {
-                return this._receiver == null ? 
-                    string.Empty : 
+        public string DataKey
+        {
+            get
+            {
+                return this._receiver == null ?
+                    string.Empty :
                     this._receiver.Key;
             }
         }

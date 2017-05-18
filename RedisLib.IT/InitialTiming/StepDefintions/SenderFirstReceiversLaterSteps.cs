@@ -1,16 +1,18 @@
 ﻿using FluentAssertions;
 using RedisLib.Core;
 using RedisLib.Core.Enums;
-using RedisLib.Receiver.Context;
-using RedisLib.Sender.Context;
-using RedisLib.Sender.Models;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
+using Transceiver.Model;
+using Transceiver.Receiver;
+using Transceiver.Sender;
 
 namespace RedisLib.IT.InitialTiming.StepDefintions
 {
+    [ExcludeFromCodeCoverage]
     [Binding]
     [Scope(Feature = "SenderFirstReceiversLater")]
     public class SenderFirstReceiversLaterSteps

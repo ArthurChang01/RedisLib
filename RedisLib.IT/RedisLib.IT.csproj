@@ -170,6 +170,10 @@
       <Project>{1165d6ca-cebd-437e-817f-6ff7f551c565}</Project>
       <Name>RedisLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TransceiverLib\TransceiverLib.csproj">
+      <Project>{fe647031-2714-4b45-a684-03fe2156d842}</Project>
+      <Name>TransceiverLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

@@ -2,12 +2,13 @@
 using NSubstitute;
 using NUnit.Framework;
 using RedisLib.Core;
-using RedisLib.Receiver.Constants;
-using RedisLib.Receiver.Context;
-using RedisLib.Receiver.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Transceiver.Constant;
+using Transceiver.Model;
+using Transceiver.Receiver;
+using Transceiver.Receiver.State;
 
 namespace RedisLib.UT.Receiver
 {
@@ -17,7 +18,7 @@ namespace RedisLib.UT.Receiver
     {
         private ReceiverContext<object> _ctx = null;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Initial()
         {
             this._ctx = new ReceiverContext<object>();
@@ -25,7 +26,14 @@ namespace RedisLib.UT.Receiver
             this._ctx.DataConnection = Substitute.For<IRediser>();
         }
 
-        [TestFixtureTearDown]
+        [TearDown]
+        public void EachDone()
+        {
+            this._ctx.DataObjs.Clear();
+            this._ctx.ExecutedRecords.Clear();
+        }
+
+        [OneTimeTearDown]
         public void Finished()
         {
             this._ctx.MsgConnection = null;
@@ -33,8 +41,44 @@ namespace RedisLib.UT.Receiver
             this._ctx = null;
         }
 
+        #region State Changed
         [Test]
-        public void Should_NodeIdMustBe0_When_ThereIsNoReceiverRegistried()
+        public void Should_ChangeToInitialState_When_ExecutedInitialMethod()
+        {
+            //Arrange
+            string expect = "InitialState",
+                      actual = string.Empty;
+
+            //Act
+            this._ctx.Initial();
+            IReceiverState currentState = this._ctx.CurrentState;
+            actual = currentState.StateName;
+
+            //Assert
+            actual.Should().NotBeEmpty().And.Be(expect);
+        }
+
+        [Test]
+        public void Should_ChangeToPrepareState_When_ExecutedRunMethod()
+        {
+            //Arrange
+            string expect = "PrepareState",
+                      actual = string.Empty;
+
+            //Act
+            this._ctx.Initial();
+            this._ctx.Run();
+            IReceiverState currentState = this._ctx.CurrentState;
+            actual = currentState.StateName;
+
+            //Assert
+            actual.Should().NotBeEmpty().And.Be(expect);
+        }
+        #endregion
+
+        #region Node Number
+        [Test]
+        public void Should_NodeIdMustBe0_When_ThereIsNoRegistriedReceiver()
         {
             //Arrange
             int expect = 0, actual = -1;
@@ -52,7 +96,7 @@ namespace RedisLib.UT.Receiver
         }
 
         [Test]
-        public void Should_NodeIdMustBe1_When_ThereIs3ReceiverRegistried_And_ReceiverNo2HasHigherDebt()
+        public void Should_NodeIdMustBe1_When_ThereIs3RegistriedReceiver_And_Receiver2HasHigherDebt()
         {
             //Arrange
             int expect = 1, actual = -1;
@@ -78,7 +122,9 @@ namespace RedisLib.UT.Receiver
             actual.Should().Be(expect);
             this._ctx.CurrentState.StateName.Should().Be("PrepareState");
         }
+        #endregion
 
+        #region Pick up log type
         [Test]
         public void Should_TopElementMustBeAPI_When_ExecuteRecordsIsEmpty()
         {
@@ -96,7 +142,7 @@ namespace RedisLib.UT.Receiver
         }
 
         [Test]
-        public void Should_TopElementMustBeBO_When_AddNewOne_And_ThereAreAPIAndBOInExecutedRecords()
+        public void Should_TopElementMustBeBO_When_AddNewOne_And_APIAndBOAreInExecutedRecords()
         {
             //Arrange
             enLogType expect = enLogType.BO, actual;
@@ -112,7 +158,9 @@ namespace RedisLib.UT.Receiver
             //Assert
             actual.Should().Be(expect);
         }
+        #endregion
 
+        #region Data key
         [Test]
         public void Should_KeyPatternMustBeStartedWithAPI0_When_ThereIsNoExecutedRecords_And_NodeIdIs0()
         {
@@ -127,9 +175,11 @@ namespace RedisLib.UT.Receiver
             //Assert
             this._ctx.DataConnection.Received().Fetch<object>(Arg.Is<string>(x => x.Split(':')[0].Equals(expect)));
         }
+        #endregion
 
+        #region Fetching data
         [Test]
-        public void Should_ThereAreSomethingInDataObjs_When_FetchSomething()
+        public void Should_DataObjsIsNotEmpty_When_FetchSomething()
         {
             //Arrange
             object something = new object();
@@ -145,6 +195,7 @@ namespace RedisLib.UT.Receiver
             //Assert
             actual.Should().BeSameAs(actual);
         }
+        #endregion
 
     }
 }

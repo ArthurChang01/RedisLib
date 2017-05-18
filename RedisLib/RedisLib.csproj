@@ -92,27 +92,6 @@
     <Compile Include="Core\IRediser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Rediser.cs" />
-    <Compile Include="Receiver\Constants\ChannelName.cs" />
-    <Compile Include="Receiver\Constants\KeyName.cs" />
-    <Compile Include="Receiver\Context\ReceiverContext.cs" />
-    <Compile Include="Receiver\Models\enLogType.cs" />
-    <Compile Include="Receiver\Models\ReceiverRecord.cs" />
-    <Compile Include="Receiver\ReceiverStates\Interfaces\IReceiverState.cs" />
-    <Compile Include="Receiver\ReceiverStates\States\Activity\InitialState.cs" />
-    <Compile Include="Receiver\ReceiverStates\States\Activity\PrepareState.cs" />
-    <Compile Include="Receiver\ReceiverStates\States\Activity\ProcessState.cs" />
-    <Compile Include="Receiver\ReceiverStates\States\Base\BaseState.cs" />
-    <Compile Include="Sender\Constants\ChannelName.cs" />
-    <Compile Include="Sender\Constants\KeyName.cs" />
-    <Compile Include="Sender\Context\SenderContext.cs" />
-    <Compile Include="Sender\Models\enLogType.cs" />
-    <Compile Include="Sender\Models\ReceiverRecord.cs" />
-    <Compile Include="Sender\Models\ReceiverTable.cs" />
-    <Compile Include="Sender\SenderStates\Interfaces\ISenderState.cs" />
-    <Compile Include="Sender\SenderStates\States\Activity\InitialState.cs" />
-    <Compile Include="Sender\SenderStates\States\Activity\PrepareState.cs" />
-    <Compile Include="Sender\SenderStates\States\Activity\ProcessState.cs" />
-    <Compile Include="Sender\SenderStates\States\Base\BaseState.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -1,8 +1,8 @@
 ﻿using RedisLib.Core;
 using RedisLib.Core.Enums;
-using RedisLib.Sender.Context;
-using RedisLib.Sender.Models;
 using System.Configuration;
+using Transceiver.Model;
+using Transceiver.Sender;
 
 namespace SenderForm.Models
 {

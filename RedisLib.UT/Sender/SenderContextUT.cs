@@ -2,14 +2,15 @@
 using NSubstitute;
 using NUnit.Framework;
 using RedisLib.Core;
-using RedisLib.Sender.Constants;
-using RedisLib.Sender.Context;
-using RedisLib.Sender.Models;
-using RedisLib.Sender.SenderStates.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Transceiver.Constant;
+using Transceiver.Model;
+using Transceiver.Model.Sender;
+using Transceiver.Sender;
+using Transceiver.Sender.State;
 
 namespace RedisLib.UT.Sender
 {
@@ -20,7 +21,7 @@ namespace RedisLib.UT.Sender
         private SenderContext<object> _ctx = null;
         private List<ReceiverRecord> rcRecords = new List<ReceiverRecord>();
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void Initial()
         {
             _ctx = new SenderContext<object>();
@@ -37,7 +38,7 @@ namespace RedisLib.UT.Sender
             this._ctx.ReceiverTable.Receivers = rcRecords;
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void Finished()
         {
             if (this._ctx.ReceiverTable.Amount > 0)
@@ -121,23 +122,6 @@ namespace RedisLib.UT.Sender
 
         #region PrepareState
         [Test]
-        public void Should_ChangeStateToProcessState_When_ExecuteSend()
-        {
-            //Arrange
-            string expect = "ProcessState",
-                      actual = string.Empty;
-            object dataValue = new object();
-
-            //Act
-            this._ctx.Initial();
-            this._ctx.Send(enLogType.BO, dataValue);
-            ISenderState currentState = this._ctx.CurrentState;
-            actual = currentState.StateName;
-
-            actual.Should().NotBeEmpty().And.Be(expect);
-        }
-
-        [Test]
         public void Should_DataKeyStartWithBO0_When_LogTypeIsBO_And_ThereIsOnlyOneReceiver()
         {
             //Arrange
@@ -179,7 +163,7 @@ namespace RedisLib.UT.Sender
             rcRecords.Add(new ReceiverRecord { ReceiverId = Guid.NewGuid().ToString(), ReceiverNodeId = 1, UnReplyCounter = 0 });
             rcRecords.Add(new ReceiverRecord { ReceiverId = Guid.NewGuid().ToString(), ReceiverNodeId = 3, UnReplyCounter = 0 });
             this._ctx.ReceiverTable.Receivers = rcRecords;
-            this._ctx.ReceiverTable.CandidateInfo = new Dictionary<enLogType, int> { { enLogType.API,-1},{ enLogType.BO,1},{ enLogType.System,-1 } };
+            this._ctx.ReceiverTable.CandidateInfo = new Dictionary<enLogType, int> { { enLogType.API, -1 }, { enLogType.BO, 1 }, { enLogType.System, -1 } };
 
             //Act
             this._ctx.Send(enLogType.BO, new object());
@@ -191,6 +175,23 @@ namespace RedisLib.UT.Sender
         #endregion
 
         #region ProcessState
+        [Test]
+        public void Should_ChangeStateToProcessState_When_ExecuteSend()
+        {
+            //Arrange
+            string expect = "ProcessState",
+                      actual = string.Empty;
+            object dataValue = new object();
+
+            //Act
+            this._ctx.Initial();
+            this._ctx.Send(enLogType.BO, dataValue);
+            ISenderState currentState = this._ctx.CurrentState;
+            actual = currentState.StateName;
+
+            actual.Should().NotBeEmpty().And.Be(expect);
+        }
+
         [Test]
         public void Should_SaveMustBeExecuted_And_SetHashTablePlusMustBeExecuted_When_ThereIsOneReceiver()
         {
