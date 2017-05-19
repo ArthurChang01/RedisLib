@@ -10,6 +10,8 @@ namespace CoreLib.ES.Factories
             ElasticClient client = null;
 
             ConnectionSettings con = new ConnectionSettings(new Uri(urlString));
+            con.DefaultIndex(DateTime.Now.ToString("yyyyMM"));
+
             client = new ElasticClient(con);
 
             return client;

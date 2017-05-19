@@ -62,7 +62,7 @@ namespace ReceiverForm
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            this._source.Add(new ReceiverItem(new ReceiverContext<object>()));
+            this._source.Add(new ReceiverItem(new ReceiverContext<DTO>()));
         }
     }
 }

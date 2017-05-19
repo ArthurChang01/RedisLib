@@ -35,7 +35,7 @@ namespace SenderForm
         private void btnAdd_Click(object sender, EventArgs e)
         {
             SenderItem si =
-                new SenderItem(new SenderContext<object>());
+                new SenderItem(new SenderContext<DTO>());
             _source.Add(si);
         }
 
@@ -54,7 +54,8 @@ namespace SenderForm
                 return;
             }
 
-            this._target.SendMsg(enLogType.API, "abc");
+            DTO msg = new DTO { ID = Guid.NewGuid().ToString(), Value = "abc" };
+            this._target.SendMsg(enLogType.API, msg);
 
             this.refresh();
         }

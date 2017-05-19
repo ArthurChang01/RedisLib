@@ -14,6 +14,8 @@ namespace CoreLib.ES.Factories
             var elasticNodes = new SniffingConnectionPool(urls.Select(o => new Uri(o)));
 
             ConnectionSettings con = new ConnectionSettings(elasticNodes);
+            con.DefaultIndex(DateTime.Now.ToString("yyyyMM"));
+
             client = new ElasticClient(con);
 
             return client;

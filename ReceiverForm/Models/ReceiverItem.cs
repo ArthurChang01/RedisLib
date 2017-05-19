@@ -1,4 +1,6 @@
-﻿using CoreLib.Redis;
+﻿using CoreLib.DB;
+using CoreLib.ES;
+using CoreLib.Redis;
 using CoreLib.Redis.Enums;
 using System.Configuration;
 using Transceiver.Receiver;
@@ -7,10 +9,10 @@ namespace ReceiverForm.Models
 {
     public class ReceiverItem
     {
-        private ReceiverContext<object> _receiver = null;
+        private ReceiverContext<DTO> _receiver = null;
 
         #region Constructor
-        public ReceiverItem(ReceiverContext<object> _receiver)
+        public ReceiverItem(ReceiverContext<DTO> _receiver)
         {
             this._receiver = _receiver;
         }
@@ -47,10 +49,14 @@ namespace ReceiverForm.Models
         #region Method
         public void InitialReceiver()
         {
-            string conString = ConfigurationManager.ConnectionStrings["redis"].ConnectionString;
+            string redisConString = ConfigurationManager.ConnectionStrings["redis"].ConnectionString,
+                      dbConString = ConfigurationManager.ConnectionStrings["db"].ConnectionString,
+                      esConString = ConfigurationManager.ConnectionStrings["es"].ConnectionString;
 
-            this._receiver.MsgConnection = new Rediser(conString, SerializerType.NewtonJson);
-            this._receiver.DataConnection = new Rediser(conString, SerializerType.NewtonJson);
+            this._receiver.MsgConnection = new Rediser(redisConString, SerializerType.NewtonJson);
+            this._receiver.DataConnection = new Rediser(redisConString, SerializerType.NewtonJson);
+            this._receiver.DB = new DBer(dbConString);
+            this._receiver.ES = new ESer(esConString);
 
             this._receiver.Initial();
         }

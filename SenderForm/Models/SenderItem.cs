@@ -9,11 +9,11 @@ namespace SenderForm.Models
     public class SenderItem
     {
         #region Members
-        private SenderContext<object> _sender = null;
+        private SenderContext<DTO> _sender = null;
         #endregion
 
         #region Constructor
-        public SenderItem(SenderContext<object> sender)
+        public SenderItem(SenderContext<DTO> sender)
         {
             this._sender = sender;
         }
@@ -49,7 +49,7 @@ namespace SenderForm.Models
             this._sender.Initial();
         }
 
-        public void SendMsg(enLogType logType, string msg)
+        public void SendMsg(enLogType logType, DTO msg)
         {
             this._sender.Send(logType, msg);
         }

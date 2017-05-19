@@ -91,6 +91,9 @@ namespace Transceiver.Receiver
             _dataConnection.Client.Database.Multiplexer.Close();
             _dataConnection = null;
 
+            _db = null;
+            _es = null;
+
             this._receiverState.Clear();
             this._dataObjs.Clear();
 

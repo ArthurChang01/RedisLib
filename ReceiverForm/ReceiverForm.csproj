@@ -52,6 +52,7 @@
     <Compile Include="frmReceiver.Designer.cs">
       <DependentUpon>frmReceiver.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\DTO.cs" />
     <Compile Include="Models\ReceiverItem.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

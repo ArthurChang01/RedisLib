@@ -13,12 +13,14 @@ namespace CoreLib.ES
         #region Constructor
         public ESer(string urlString)
         {
-            _client = SingleNodeClient.GetClient(urlString);
+            if (_client == null)
+                _client = SingleNodeClient.GetClient(urlString);
         }
 
         public ESer(params string[] urlString)
         {
-            _client = MultiNodeClient.GetClient(urlString);
+            if (_client == null)
+                _client = MultiNodeClient.GetClient(urlString);
         }
         #endregion
 
