@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReceiverForm", "ReceiverFor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransceiverLib", "TransceiverLib\TransceiverLib.csproj", "{FE647031-2714-4B45-A684-03FE2156D842}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinderForm", "FinderForm\FinderForm.csproj", "{9032527C-FC64-42AA-98C0-BDDC30B6B9DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{FE647031-2714-4B45-A684-03FE2156D842}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE647031-2714-4B45-A684-03FE2156D842}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE647031-2714-4B45-A684-03FE2156D842}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9032527C-FC64-42AA-98C0-BDDC30B6B9DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9032527C-FC64-42AA-98C0-BDDC30B6B9DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9032527C-FC64-42AA-98C0-BDDC30B6B9DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9032527C-FC64-42AA-98C0-BDDC30B6B9DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,5 +68,6 @@ Global
 		{CE8B4886-DE46-4E2E-A145-612EE215AF14} = {A21CFE4E-0CD5-4FAC-BCE3-CB23711DB86F}
 		{9DBA891B-D717-48D8-B621-9D0D22A44C19} = {A21CFE4E-0CD5-4FAC-BCE3-CB23711DB86F}
 		{FE647031-2714-4B45-A684-03FE2156D842} = {9E17AD81-7847-4203-87D9-EA6085CB1947}
+		{9032527C-FC64-42AA-98C0-BDDC30B6B9DA} = {A21CFE4E-0CD5-4FAC-BCE3-CB23711DB86F}
 	EndGlobalSection
 EndGlobal

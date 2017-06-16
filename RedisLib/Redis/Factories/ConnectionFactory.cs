@@ -12,7 +12,7 @@ namespace CoreLib.Redis.Factories
             IConnectionMultiplexer con = null;
 
             ConfigurationOptions opt = null;
-            if (string.IsNullOrEmpty(conString))
+            if (!string.IsNullOrEmpty(conString))
                 opt = ConfigurationOptions.Parse(conString);
             else
                 opt = new ConfigurationOptions()
