@@ -62,6 +62,12 @@ namespace SenderForm
 
         private void BtnInitiate_Click(object sender, EventArgs e)
         {
+            if (this._target == null)
+            {
+                MessageBox.Show("Must add a new redis node first", "error operation", MessageBoxButtons.OK);
+                return;
+            }
+
             this._target.InitialSender();
             this._target.IsInitiate = true;
 
